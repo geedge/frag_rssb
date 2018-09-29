@@ -1,0 +1,244 @@
+{
+    "compile_table": "SIFTER_CONFIG_FULL",
+    "group_table": "SIFTER_GROUP",
+    "rules": [
+        {
+            "compile_id": 1,
+            "service": 1,
+            "action": 1,
+            "do_blacklist": 1,
+            "do_log": 1,
+            "effective_rage": 0,
+            "user_region": "youku",
+            "is_valid": "yes",
+            "groups": [
+                {
+                    "group_name": "1_start",
+                    "regions": [
+                        {
+                            "table_name": "SIFTER_START",
+                            "table_type": "string",
+                            "table_content": {
+                                "keywords": "ABC",
+                                "expr_type": "none",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }  
+                      
+                    ]
+                }
+            ]
+        },
+        {
+            "compile_id": 2,
+            "service": 1,
+            "action": 1,
+            "do_blacklist": 1,
+            "do_log": 1,
+            "effective_rage": 0,
+            "user_region": "iqiyi",
+            "is_valid": "yes",
+            "groups": [
+                {
+                    "group_name": "iqiyi_server",
+                    "regions": [
+                       {
+                            "table_name": "YCL_AV_SERVER",
+                            "table_type": "string",
+                            "table_content": {
+                                "keywords": "nginx",
+                                "expr_type": "none",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "group_name": "av_type"
+                },
+                {
+                    "group_name": "iqiyi_url",
+                    "regions": [
+                       {
+                            "table_name": "YCL_AV_URL",
+                            "table_type": "string",
+                            "table_content": {
+                                "keywords": "video&qyid=",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "compile_id": 3,
+            "service": 1,
+            "action": 1,
+            "do_blacklist": 1,
+            "do_log": 1,
+            "effective_rage": 0,
+            "user_region": "tencent",
+            "is_valid": "yes",
+            "groups": [
+                {
+                    "group_name": "tencent_server",
+                    "regions": [
+                       {
+                            "table_name": "YCL_AV_SERVER",
+                            "table_type": "string",
+                            "table_content": {
+                                "keywords": "nginx",
+                                "expr_type": "none",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "group_name": "av_type"
+                },
+                {
+                    "group_name": "tencent_url",
+                    "regions": [
+                       {
+                            "table_name": "YCL_AV_URL",
+                            "table_type": "string",
+                            "table_content": {
+                                "keywords": "qqvideo.tc.qq.com",
+                                "expr_type": "none",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+       {
+            "compile_id": 4,
+            "service": 1,
+            "action": 1,
+            "do_blacklist": 1,
+            "do_log": 1,
+            "effective_rage": 0,
+            "user_region": "letv",
+            "is_valid": "yes",
+            "groups": [
+                {
+                    "group_name": "letv_server",
+                    "regions": [
+                       {
+                            "table_name": "YCL_AV_SERVER",
+                            "table_type": "string",
+                            "table_content": {
+                                "keywords": "letv",
+                                "expr_type": "none",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "group_name": "av_type"
+                }
+            ]
+        },
+        {
+            "compile_id": 5,
+            "service": 1,
+            "action": 1,
+            "do_blacklist": 1,
+            "do_log": 1,
+            "effective_rage": 0,
+            "user_region": "sohu",
+            "is_valid": "yes",
+            "groups": [
+                {
+                    "group_name": "sohu_server",
+                    "regions": [
+                       {
+                            "table_name": "YCL_AV_SERVER",
+                            "table_type": "string",
+                            "table_content": {
+                                "keywords": "nginx",
+                                "expr_type": "none",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "group_name": "av_type"
+                },
+                {
+                    "group_name": "sohu_url",
+                    "regions": [
+                       {
+                            "table_name": "YCL_AV_URL",
+                            "table_type": "string",
+                            "table_content": {
+                                "keywords": "sohu",
+                                "expr_type": "none",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+       {
+            "compile_id": 6,
+            "service": 1,
+            "action": 1,
+            "do_blacklist": 1,
+            "do_log": 1,
+            "effective_rage": 0,
+            "user_region": "pptv",
+            "is_valid": "yes",
+            "groups": [
+                {
+                    "group_name": "pptv_server",
+                    "regions": [
+                       {
+                            "table_name": "YCL_AV_SERVER",
+                            "table_type": "string",
+                            "table_content": {
+                                "keywords": "nginx",
+                                "expr_type": "none",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "group_name": "av_type"
+                },
+                {
+                    "group_name": "pptv_url",
+                    "regions": [
+                       {
+                            "table_name": "YCL_AV_URL",
+                            "table_type": "string",
+                            "table_content": {
+                                "keywords": "type=web.fpp",
+                                "expr_type": "none",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+   ]
+}

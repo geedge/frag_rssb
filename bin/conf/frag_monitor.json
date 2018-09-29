@@ -1,0 +1,385 @@
+{
+    "compile_table": "FRAG_MONITOR_CONFIG_FULL",
+    "group_table": "FRAG_MONITOR_GROUP",
+    "rules": 
+	[
+		{
+            "compile_id": 11,
+            "service": 3122,
+            "action": 0,
+            "do_blacklist": 166,
+            "do_log": 2,
+            "effective_range": 0,
+            "user_region": "iqiyi_data_c2s",
+            "is_valid": "yes",
+            "groups": [               
+                {
+                    "group_name": "iqiyi_data_c2s",
+                    "regions": [
+                        {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+					  "district": "HTTP_MESSAGE_URL",
+                                "keywords": "video&f4v&range",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }										
+                    ]							
+                }
+				
+            ]			
+        },	
+		{
+            "compile_id": 12,
+            "service": 3122,
+            "action": 2,
+            "do_blacklist": 167,
+            "do_log": 2,
+            "effective_range": 0,
+            "user_region": "iqiyi_data_s2c",
+            "is_valid": "yes",
+            "groups": [               
+                {
+                    "group_name": "iqiyi_data_s2c",
+                    "regions": [
+                        {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+					  "district": "HTTP_CONT_TYPE",
+                                "keywords": "application/octet-stream",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }									
+                    ]							
+                }
+				
+            ]			
+        },		
+		{
+            "compile_id": 7,
+            "service": 2222,
+            "action": 0,
+            "do_blacklist": 162,
+            "do_log": 2,
+            "effective_range": 0,
+            "user_region": "tudou_data_c2s",
+            "is_valid": "yes",
+            "groups": [               
+                {
+                    "group_name": "tudou_data_c2s",
+                    "regions": [
+                        {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+					  "district": "HTTP_MESSAGE_URL",
+                                "keywords": ".ts&ts_start&ts_end&ts_seg_no",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }										
+                    ]							
+                }
+				
+            ]			
+        },	
+		{
+            "compile_id": 8,
+            "service": 2222,
+            "action": 2,
+            "do_blacklist": 162,
+            "do_log": 2,
+            "effective_range": 0,
+            "user_region": "tudou_data_s2c",
+            "is_valid": "yes",
+            "groups": [               
+                {
+                    "group_name": "tudou_data_s2c",
+                    "regions": [
+                        {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+ 					  "district": "HTTP_SERVER",
+                                "keywords": "YOUKU.BJ.FBN",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }										
+                    ]							
+                }
+				
+            ]			
+        },		
+		{
+            "compile_id": 9,
+            "service": 2221,
+            "action": 1,
+            "do_blacklist": 162,
+            "do_log": 0,
+            "effective_range": 0,
+            "user_region": "tudou_index_c2s",
+            "is_valid": "yes",
+            "groups": [               
+                {
+                    "group_name": "tudou_index_c2s",
+                    "regions": [
+                        {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+					  "district": "HTTP_MESSAGE_URL",
+                                "keywords": "/playlist/m3u8",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }										
+                    ]							
+                }
+				
+            ]			
+        },	
+		{
+            "compile_id": 10,
+            "service": 2221,
+            "action": 1,
+            "do_blacklist": 162,
+            "do_log": 0,
+            "effective_range": 0,
+            "user_region": "tudou_index_s2c",
+            "is_valid": "yes",
+            "groups": [               
+                {
+                    "group_name": "tudou_index_s2c",
+                    "regions": [
+                        {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+					  "district": "HTTP_CONTENT",
+                                "keywords": "#EXTM3U&#EXTINF&ts&start&end",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }										
+                    ]							
+                }
+            ]			
+        },
+		{
+            "compile_id": 1,
+            "service": 1122,
+            "action": 0,
+            "do_blacklist": 161,
+            "do_log": 2,
+            "effective_range": 0,
+            "user_region": "osmf_data_c2s",
+            "is_valid": "yes",
+            "groups": [               
+                {
+                    "group_name": "osmf_data_c2s",
+                    "regions": [
+                        {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+					  "district": "HTTP_MESSAGE_URL",
+                                "keywords": "Seg&Frag",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }					
+                    ]							
+                }							
+            ]
+        },
+	 {
+            "compile_id": 2,
+            "service": 1122,
+            "action": 2,
+            "do_blacklist": 161,
+            "do_log": 2,
+            "effective_range": 0,
+            "user_region": "osmf_data_s2c",
+            "is_valid": "yes",
+            "groups": [               
+                {
+                    "group_name": "osmf_data_s2c",
+                    "regions": [
+                        {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+				"district": "HTTP_CONT_TYPE",
+                                "keywords": "f4f",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }					
+                    ]							
+                }							
+            ]
+        },	
+		
+		{
+            "compile_id": 3,
+            "service": 2122,
+            "action": 0,
+            "do_blacklist": 162,
+            "do_log": 2,
+            "effective_range": 0,
+            "user_region": "hls_data_c2s",
+            "is_valid": "yes",
+            "groups": [               
+                {
+                    "group_name": "hls_data_c2s",
+                    "regions": [
+                        {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+					  "district": "HTTP_MESSAGE_URL",
+                                "keywords": ".ts",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }					
+                    ]							
+                }							
+            ]
+        }, 
+		{
+            "compile_id": 4,
+            "service": 2122,
+            "action": 2,
+            "do_blacklist": 162,
+            "do_log": 2,
+            "effective_range": 0,
+            "user_region": "hls_data_s2c",
+            "is_valid": "yes",
+            "groups": [
+				{
+                    "group_name": "hls_data_s2c",
+                    "regions": [
+                        {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+					  "district": "HTTP_CONT_TYPE",
+                                "keywords": "application/x-transportstream",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        },										
+                        {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+					  "district": "HTTP_CONT_TYPE",
+                                "keywords": "video/mp2t",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        },										
+                        {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+					  "district": "HTTP_CONT_TYPE",
+                                "keywords": "video/x-flv",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }										
+                    ]							
+                }               
+            ]
+        },
+		{
+            "compile_id": 5,
+            "service": 2121,
+            "action": 1,
+            "do_blacklist": 162,
+            "do_log": 0,
+            "effective_range": 0,
+            "user_region": "hls_index_c2s",
+            "is_valid": "yes",
+            "groups": [               
+                {
+                    "group_name": "hls_index_c2s",
+                    "regions": [
+                        {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+					 "district": "HTTP_MESSAGE_URL",
+                                "keywords": ".m3u8",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }					
+                    ]							
+                }							
+            ]
+        },
+		{
+            "compile_id": 6,
+            "service": 2121,
+            "action": 1,
+            "do_blacklist": 162,
+            "do_log": 0,
+            "effective_range": 0,
+            "user_region": "hls_index_s2c",
+            "is_valid": "yes",
+            "groups": [               
+                {
+                    "group_name": "hls_index_s2c_1",
+                    "regions": [
+                        {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+					  "district": "HTTP_CONT_TYPE",
+                                "keywords": "application/vnd.apple.mpegurl",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        },               							                  {
+                            "table_name": "FRAG_MONITOR_KEYWORDS",
+                            "table_type": "expr_plus",
+                            "table_content": {
+					 "district": "HTTP_CONTENT",
+                                "keywords": "#EXTM3U",
+                                "expr_type": "and",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }					
+                    ]							
+                }							
+            ]
+        }		
+    ]
+}
+
+
+
+

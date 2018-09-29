@@ -1,0 +1,62 @@
+#!/usr/bin/expect -f
+if {$argc != 4} {
+	puts "usage example:./kr \"ps aux\" 10.52.202.1 user passwd"
+		exit
+}
+set cmd [lindex $argv 0]
+set sip [lindex $argv 1]
+set user [lindex $argv 2]
+set passwd [lindex $argv 3]
+
+set logfile "kr.log"
+set timeout 5
+spawn ssh $user@$sip
+set flag 0
+sleep 5
+expect	{
+	"(yes/no)?"
+	{
+		send "yes\r"
+			expect "*password:"
+			send "$passwd\r"
+	}
+	"*password:"
+	{
+		send "$passwd\r"
+	}
+	"Connection closed by remote host"
+	{
+		system echo " " $sip " " closed >> $logfile
+			set flag 1
+	}
+	"No route to host"
+	{
+		system echo " " $sip " " no host >> $logfile
+			set flag 1
+	}
+	timeout 
+	{
+		system echo " " $sip " " timeout >> $logfile
+			set flag 1
+	}
+	"]#"
+	{
+		send "$cmd\r"
+			expect "]#"
+			sleep 1
+			send "logout\r"
+			set flag 1
+			system echo $user@$sip "]# " '$cmd' >> $logfile
+	}
+
+}
+if {$flag!=1} {
+	expect "]#"
+		send "$cmd\r"
+		system echo $user@$sip "]# " '$cmd' >> $logfile
+		expect "]#"
+		sleep 1
+		send "logout\r"
+}
+expect eof
+

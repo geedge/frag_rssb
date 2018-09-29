@@ -1,0 +1,839 @@
+//author: 	lishu
+//date:		2015-9-23
+
+
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <math.h>
+#include <net/if.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <assert.h>
+
+#include "Maat_rule.h"
+#include "MESA_handle_logger.h"
+#include "MESA_prof_load.h"
+#include "mime_parse.h" //bounary所需
+#include "mem_common.h"
+#include "sifter.h"
+
+int SIFTER_VERSION_1_0_20180114_1 = 0;
+
+void sifter_history()
+{
+	//2015.10.17 create the project	
+	//2016.05.31 add end method
+	//2016.08.16 add boundary method by dumeijie, add para
+	//2017.02.28 calloc
+	//2017.09.21 \r\n=\r=\n
+	//2017.09.22 1. bug. 2 str_find 3. only support \n, proc \r, templete only support \n, not ",\n"
+	//2018.01.14 1. hit_detail 2. mid = \n\n 3. sifter.json w
+	//2018.07.12 1. set MAX_INNER_RESUTL_NUM 16 in frag_rssb
+}
+
+#define  		SIFTER_MODULE_NAME  		"[FRGMNT_QUERY_SIFTER]"
+#define 		FILENAME_LEN 				128
+#define 		EXTRACT_METHOD_NUM 			5
+const char *sifter_extract_method_str[EXTRACT_METHOD_NUM]= {"Tag", "RawText", "Reposition", "Boundary","End"};
+
+typedef enum
+{
+	TAG,
+	RAWTEXT,
+	REPOSITION,
+    BOUNDARY,
+    END,
+}EXTRACT_METHOD;
+
+#define 		EXPECT_NAME			    	32
+#define 		EXTRACT_FEATHER_LENGTH		64
+typedef struct sifter_expect_s
+{
+	int 						expect_type;
+	uint32 						expect_loc_type;	
+	char						start[EXTRACT_FEATHER_LENGTH];	
+	char 						mid[EXTRACT_FEATHER_LENGTH];
+	char 						end[EXTRACT_FEATHER_LENGTH];
+	char 						expect_name[EXPECT_NAME];
+	char 						expect_loc_name[EXPECT_NAME];
+	EXTRACT_METHOD  			extract_method;
+}sifter_expect_t;
+
+#define 		MAX_EXPECT_TYPE_NUM     	16
+typedef struct sifter_manager_s
+{
+	int 						sifter_id;	
+	int							ept_num;
+	sifter_expect_t*			ept[MAX_EXPECT_TYPE_NUM];
+}sifter_manager_t;
+
+#define 		MAX_SIFTER_NUM     			16
+typedef struct sifter_inner_s
+{
+	Maat_feather_t 				feather;	
+	scan_status_t 				mid;
+	void*						logger;
+	sifter_manager_t*			mnger[MAX_SIFTER_NUM];
+	int							mnger_num;	
+	int							thread_num;	
+	short						start_tableid; 	
+	struct Maat_rule_t ** mrule_buff;
+	struct Maat_hit_detail_t** mhit_detail;
+}sifter_inner_t;
+
+typedef struct bounary_inner_s
+{
+	char* name;
+	char* out_cont;
+	unsigned int out_cont_len;
+	
+	short block_seq;
+}bounary_inner_t;
+
+typedef enum
+{
+	DOMIAN_INFO,
+    DOMAIN_EXTRACT,
+}DOMIAN_TYPE;
+
+/*
+#define MAAT_JSON_START  "{\
+    \"compile_table\": \"SIFTER_CONFIG_FULL\",\
+    \"group_table\":\"SIFTER_GROUP\",\
+    \"rules\": ["
+#define MAAT_JSON_END  "   ]\
+}"
+*/
+#define MAAT_JSON_START  "{\r\n\
+    \"compile_table\": \"SIFTER_CONFIG_FULL\",\r\n\
+    \"group_table\":\"SIFTER_GROUP\",\r\n\
+    \"rules\": \r\n\
+    [\r\n"
+    
+#define MAAT_JSON_END  "   ]\r\n\
+}"
+
+int sifter_to_maat(sifter_inner_t* hd, const char* conf_path, const char* log_path, int maat_stat_swicth, int maat_perf_swicth)
+{
+	char json_file[FILENAME_LEN] = {0};	
+	char stat_file[FILENAME_LEN] = {0};	
+	char table_info_conf[FILENAME_LEN] = {0};
+	char first_compile = 1;
+
+	snprintf(json_file, sizeof(json_file), "%s/%s", conf_path, "sifter.json");
+	snprintf(stat_file, sizeof(stat_file), "%s/%s", log_path, "maat_stat.log");
+	snprintf(table_info_conf, sizeof(table_info_conf), "%s/%s", conf_path, "table_info.conf");
+	
+	FILE* 		json_fp = fopen(json_file,"w");
+	int			compile_id = 1;	
+	int			seq = 0;
+	int			i=0,j=0;
+	if(json_fp==NULL)
+	{		
+		printf("open sifter.json error\n!");
+		return -1;
+	}
+	fprintf(json_fp, "%s", MAAT_JSON_START); 
+	for(i=0;i<hd->mnger_num;i++)
+	{
+		for(j=0;j<hd->mnger[i]->ept_num;j++)
+		{			
+			if(hd->mnger[i]->ept[j]->start[0]=='\0')
+			{
+				continue;
+			}
+			if(!first_compile)
+			{
+				fprintf(json_fp , "%s\r\n", ",");
+				first_compile = 0;
+			}
+			fprintf(json_fp,"{\r\n\
+           \"compile_id\": %d,\r\n\
+           \"service\": %d,\r\n\
+           \"action\": %d,\r\n\
+           \"do_blacklist\": %d,\r\n\
+           \"do_log\": %d,\r\n\
+           \"effective_rage\": 0,\r\n\
+           \"user_region\": \"%s\",\r\n\
+           \"is_valid\": \"yes\",\r\n\
+           \"groups\": [\r\n\
+                {\r\n\
+                    \"group_name\": \"%d_start\",\r\n\
+                    \"regions\": [\r\n\
+                        {\r\n\
+                            \"table_name\": \"SIFTER_START\",\r\n\
+                            \"table_type\": \"string\",\r\n\
+                            \"table_content\": {\r\n\
+                                \"keywords\": \"%s\",\r\n\
+                                \"expr_type\": \"none\",\r\n\
+                                \"match_method\": \"sub\",\r\n\
+                                \"format\": \"uncase plain\"\r\n\
+                            }\r\n\
+                        }\r\n\
+                    ]\r\n\
+                }\r\n\
+            ]\r\n\
+        }", compile_id, hd->mnger[i]->sifter_id, hd->mnger[i]->ept[j]->expect_type, i,j,hd->mnger[i]->ept[j]->expect_name,
+        	seq, hd->mnger[i]->ept[j]->start);
+        	compile_id ++;
+			seq++;				
+			first_compile = 0;
+		}
+	}	
+	fprintf(json_fp, "%s", MAAT_JSON_END); 	
+	fclose(json_fp);
+	//hd->feather = Maat_summon_feather_json(hd->thread_num,table_info_conf,json_file,hd->logger);	
+	int scan_detail = 1;
+	hd->feather = Maat_feather(hd->thread_num, table_info_conf, hd->logger);
+	Maat_set_feather_opt(hd->feather, MAAT_OPT_JSON_FILE_PATH, json_file, strlen(json_file)+1);
+	Maat_set_feather_opt(hd->feather, MAAT_OPT_STAT_FILE_PATH, stat_file, strlen(stat_file)+1);
+	if(maat_stat_swicth)
+	{
+		Maat_set_feather_opt(hd->feather, MAAT_OPT_STAT_ON, NULL, 0);
+	}
+	if(maat_perf_swicth)
+	{
+		Maat_set_feather_opt(hd->feather, MAAT_OPT_PERF_ON, NULL, 0);
+	}
+	Maat_set_feather_opt(hd->feather, MAAT_OPT_SCAN_DETAIL, &scan_detail, sizeof(scan_detail));
+	Maat_initiate_feather(hd->feather);
+	if(NULL==hd->feather)
+	{
+		MESA_handle_runtime_log(hd->logger, RLOG_LV_FATAL, SIFTER_MODULE_NAME, "Maat_summon_feather_json");
+		return -1;
+	}
+	hd->start_tableid = Maat_table_register(hd->feather,"SIFTER_START");
+	return 0;
+}
+
+void *memstr(const void *s, const char *t, size_t n_s)
+{
+    if (NULL == s || NULL == t || n_s <= 0)
+    {
+        return NULL;
+    }
+    
+    return (void *)mail_memmem(s, n_s, (const void*)t, strlen(t));
+}
+
+/*
+char* str_find(const void *s, const char *t, int* t_l, size_t n_s)
+{	
+	char* crlf = NULL;
+	char* find_pos = NULL;
+	char  new_char[EXTRACT_FEATHER_LENGTH] = {0};
+	int	  new_charlen = 0;	
+	int	  t_len = strlen(t);
+		
+    if (NULL == s || NULL == t || n_s <= 0)
+    {
+        return NULL;
+    }  
+	find_pos = (char *)mail_memmem(s, n_s, (const void*)t, t_len);
+	if(NULL==find_pos)
+	{		
+		crlf = mail_memmem(t, t_len, (const void*)"\n", 1);		
+		if(NULL!=crlf)
+		{				
+			new_charlen = crlf-t;			
+			memcpy(new_char, t, new_charlen);			
+			snprintf(new_char+new_charlen, EXTRACT_FEATHER_LENGTH-new_charlen, "\r%s", crlf);
+			memcpy(new_char+new_charlen, crlf, t_len-new_charlen-1);
+			find_pos = (char *)mail_memmem(s, n_s, (const void*)new_char, t_len-1);
+			if(NULL!=find_pos)
+			{
+				*t_l = t_len-1;
+				return find_pos;		
+			}		
+			*(new_char+new_charlen) = '\r';
+			find_pos = (char *)mail_memmem(s, n_s, (const void*)new_char, t_len-1);
+			if(NULL!=find_pos) 
+			{	
+				*t_l = t_len-1;
+				return find_pos;
+			}
+		}
+	}
+			
+}
+*/
+
+char* str_find(const void *s, const char *t, size_t n_s)
+{	
+    if (NULL == s || NULL == t || n_s <= 0)
+    {
+        return NULL;
+    }  
+	return  (char*)mail_memmem(s, n_s, (const void*)t, strlen(t));
+}
+		
+int sifter_decode_char(char *str)
+{
+    char *curpos = NULL;
+    char *curlocate = str;
+    int iStrLen = 0;
+    int iValue = 0;
+    int iByteNum = 0;
+
+    if (NULL == str)
+    {
+        return -1;
+    }
+
+    do
+    {
+        curpos = (char *)memstr(curlocate, "\\", strlen(curlocate));
+        if (NULL != curpos)
+        {
+            memcpy(&str[iStrLen], curlocate, curpos - curlocate);                      
+            iStrLen += curpos - curlocate;
+            curlocate = curpos;
+
+            if (curpos[1] == 'x' || curpos[1] == 'X')
+            {
+                iByteNum = 2;
+                iValue = 0;
+                if (curpos[3] >= '0' && curpos[3] <= '9')
+                {
+                    iValue += curpos[3] - '0';
+                }
+                else if (curpos[3] >= 'a' && curpos[3] <= 'f')
+                {
+                    iValue += curpos[3] - 'a' + 10;
+                }
+                else if (curpos[3] >= 'A' && curpos[3] <= 'F')
+                {
+                    iValue += curpos[3] - 'A' + 10;
+                }
+                else
+                {
+                    iValue = -1;
+                    iByteNum = 1;
+                }
+                
+                if (curpos[2] >= '0' && curpos[2] <= '9')
+                {
+                    if (iValue >= 0)
+                    {
+                        iValue += (curpos[2] - '0') << 4;
+                    }
+                    else
+                    {
+                        iValue = curpos[2] - '0';
+                    }
+                }
+                else if (curpos[2] >= 'a' && curpos[2] <= 'f')
+                {
+                    if (iValue >= 0)
+                    {
+                        iValue += (curpos[2] - 'a' + 10) << 4;
+                    }
+                    else
+                    {
+                        iValue = curpos[2] - 'a' + 10;
+                    }
+                }
+                else if (curpos[2] >= 'A' && curpos[2] <= 'F')
+                {
+                    if (iValue >= 0)
+                    {
+                        iValue += (curpos[2] - 'A' + 10) << 4;
+                    }
+                    else
+                    {
+                        iValue = curpos[2] - 'A' + 10;
+                    }
+                }
+                else
+                {
+                    iValue = -1;
+                }
+
+                if (-1 == iValue)
+                {
+                    memcpy(&str[iStrLen], curpos, 1);                      
+                    iStrLen += 1;
+                    curlocate = curpos + 1;
+                }
+                else
+                {
+                    str[iStrLen] = iValue;
+                    iStrLen += 1;
+                    curlocate = curpos + iByteNum +2;
+                }
+                
+            }
+            else
+            {
+                memcpy(&str[iStrLen], curpos, 1);                      
+                iStrLen += 1;
+                curlocate = curpos + 1;
+            }
+        }
+        else
+        {
+            memcpy(&(str[iStrLen]), curlocate, strlen(curlocate));                      
+            iStrLen += strlen(curlocate);
+        }
+    }while (NULL != curpos);
+    str[iStrLen] = '\0';
+    return 0;
+}
+
+int get_array_index(char *string, const char* g_string[], unsigned int array_num)
+{
+	int i=0;
+	for(i=0;i<(int)array_num;i++)
+	{
+		if (strcasecmp(g_string[i],(const char*)string)==0)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+void unload_last_sifter_file(sifter_inner_t* hd)
+{
+	if(hd->mnger[hd->mnger_num]!=NULL)
+	{
+		for(int i=0;i<hd->mnger[hd->mnger_num]->ept_num;i++)
+		{
+			if(hd->mnger[hd->mnger_num]->ept[i]!=NULL)
+			{
+				free(hd->mnger[hd->mnger_num]->ept[i]);
+			}
+		}
+		free(hd->mnger[hd->mnger_num]);
+		hd->mnger_num -= 1;
+	}
+}
+
+#define MAX_FIELD_LINE_SIZE  2048
+int load_sifter_file(sifter_inner_t* hd,const char* filename)
+{
+	FILE*				fp=NULL;
+	char 				line[MAX_FIELD_LINE_SIZE];
+	int					domain_id = -1;
+	int					mnger_num = hd->mnger_num;
+	sifter_expect_t*	ept;
+	char 				ept_method[EXTRACT_FEATHER_LENGTH];	
+	int					temp = 0;
+	
+	fp=fopen(filename,"r");
+	if(fp==NULL)
+	{		
+		return -1;
+	}	
+	hd->mnger[mnger_num] = (sifter_manager_t*)calloc(1, sizeof(sifter_manager_t));
+	hd->mnger_num += 1;
+
+	if(MESA_load_profile_int_nodef(filename, "INFOR", "sft_id", &hd->mnger[mnger_num]->sifter_id)<0)
+	{
+		free(hd->mnger[mnger_num]);
+		hd->mnger_num -= 1;
+		return -1;
+	}	
+	while(NULL!=fgets(line,sizeof(line),fp))
+	{
+		if(line[0]=='#'||line[0]==' '||line[0]=='\t'||line[0]=='\r'||line[0]=='\n')
+		{
+			continue;
+		}		
+		if(NULL!=strcasestr(line, "[EXTRACT]"))
+		{
+			domain_id = DOMAIN_EXTRACT;
+			continue;
+		}
+
+		switch(domain_id)
+		{			
+			case DOMAIN_EXTRACT:
+				hd->mnger[mnger_num]->ept[hd->mnger[mnger_num]->ept_num] = (sifter_expect_t*)calloc(1, sizeof(sifter_expect_t));				
+				ept = hd->mnger[mnger_num]->ept[hd->mnger[mnger_num]->ept_num];
+				hd->mnger[mnger_num]->ept_num += 1;
+				temp = sscanf(line,"{%d}{%[^}]}={%x}{%[^}]}$%[^$]$%[^$]$%[^$]$%[^$]",&(ept->expect_type)
+																					,(ept->expect_name)
+																					,&(ept->expect_loc_type)
+																					,(ept->expect_loc_name)
+																					,(ept_method)
+																					,(ept->start)
+																					,(ept->mid)
+																					,(ept->end));												
+				if(temp<8)
+				{
+					unload_last_sifter_file(hd);
+					return -1;
+				}
+				ept->extract_method = (EXTRACT_METHOD)get_array_index(ept_method, sifter_extract_method_str, EXTRACT_METHOD_NUM);
+				if(-1==ept->extract_method)
+				{
+					unload_last_sifter_file(hd);
+					return -1;
+				}
+				(void)sifter_decode_char(ept->start);
+    			(void)sifter_decode_char(ept->mid);
+    			(void)sifter_decode_char(ept->end);							
+				break;
+			default:
+				continue;
+				break;
+		}
+	}	
+	return 0;
+}
+
+int  traverse_sifter_file(sifter_inner_t* hd, const char* path)
+{
+	DIR*			db; 
+    char 			filename[FILENAME_LEN] = {0}; 	
+    struct dirent*	p;
+    char*			p_file = NULL;
+	
+	db=opendir(path); 
+	if(db==NULL)
+	{
+		return -1;
+	}
+	while ((p=readdir(db))) 
+	{
+		if((strcmp(p->d_name,".")==0)||(strcmp(p->d_name,"..")==0))   
+			continue;  
+		else  
+		{
+			sprintf(filename,"%s/%s",path,p->d_name);  
+			p_file=(char*)strcasestr((const char*)filename,".sft");
+			if (p_file==NULL)
+			{
+				continue;
+			}
+			if (0 == load_sifter_file(hd, (const char*)filename)) 
+			{
+				MESA_handle_runtime_log(hd->logger, RLOG_LV_FATAL, SIFTER_MODULE_NAME, "Load \"%s\" Success!\n", filename);
+			}				
+			else  
+			{	
+				MESA_handle_runtime_log(hd->logger, RLOG_LV_FATAL, SIFTER_MODULE_NAME, "Load  \"%s\" Fail!\n",filename);
+			}
+		}
+		memset(filename,0,sizeof(filename)); 
+	}
+	closedir(db); 
+	return 0;
+}
+#define	MAX_INNER_RESUTL_NUM	16
+sifter_t create_sifter(const char* sifter_cfg_dir, const char* sifter_log_dir, int maat_stat_swicth, int maat_perf_swicth, int thread_num, void* logger)
+{
+	
+	int i=0;
+	sifter_inner_t* hd = (sifter_inner_t*)calloc(1, sizeof(sifter_inner_t));
+	hd->logger = logger;
+	hd->thread_num = thread_num;
+	if(-1==traverse_sifter_file(hd, sifter_cfg_dir))
+	{
+		free(hd);
+		return NULL;
+	}
+	if(-1==sifter_to_maat(hd, sifter_cfg_dir, sifter_log_dir, maat_stat_swicth, maat_perf_swicth))
+	{
+		return NULL;
+	}
+	hd->mrule_buff=(struct Maat_rule_t**)malloc(sizeof(struct Maat_rule_t*)*thread_num);
+	hd->mhit_detail=(struct Maat_hit_detail_t**)malloc(sizeof(struct Maat_hit_detail_t*)*thread_num);
+	for(i=0;i<thread_num;i++)
+	{
+		hd->mrule_buff[i]=(struct Maat_rule_t*)malloc(sizeof(struct Maat_rule_t)*MAX_INNER_RESUTL_NUM);
+		hd->mhit_detail[i]=(struct Maat_hit_detail_t*)malloc(sizeof(struct Maat_hit_detail_t)*MAX_INNER_RESUTL_NUM);
+	}
+	return (sifter_t)hd;
+}
+
+void destroy_sifter(sifter_t handle)
+{
+	int i;
+	if(handle==NULL) return ;
+	sifter_inner_t* hd = (sifter_inner_t*)handle;
+	for(i=0;i< hd->mnger_num;i++)
+	{
+		if(hd->mnger[i]!=NULL)
+		{
+			for(int j=0;j>hd->mnger[i]->ept_num;j++)
+			{
+				if(hd->mnger[i]->ept[j]!=NULL)
+				{
+					free(hd->mnger[i]->ept[j]);
+				}
+			}
+		}		
+		free(hd->mnger[i]);
+	}	
+	if(hd->mid != NULL)
+	{
+		Maat_clean_status(&(hd->mid));
+		hd->mid = NULL;
+	}
+	for(i=0;i<hd->thread_num;i++)
+	{
+		free(hd->mrule_buff[i]);
+		hd->mrule_buff[i]=NULL;
+		free(hd->mhit_detail[i]);
+		hd->mhit_detail[i]=NULL;
+	}
+	free(hd->mrule_buff);
+	hd->mrule_buff=NULL;
+	free(hd->mhit_detail);
+	hd->mhit_detail=NULL;
+	free(hd);
+}
+
+int sifter_extract(sifter_expect_t* ept,  const char* found_pos, int res_num, expect_outcome_t* res,		  		    
+		   		   const char* text, int textlen)
+{
+	char *start_pos = NULL, *repos = NULL, *end_pos = NULL;
+	const char* bgn_sep = ept->start;
+	const char* mid_sep = ept->mid;
+	const char* end_sep = ept->end;
+	int rec = 0;
+
+	/*no start*/	
+	if ('\0' == bgn_sep[0])
+	{
+		start_pos = (char*)text; 
+	}
+	else
+	{
+		start_pos = (char*)found_pos+strlen(bgn_sep); 
+	}
+	if(textlen-(start_pos-text)<0) return 0;
+	if ('\0' != mid_sep[0])
+	{
+		repos=(char*)str_find(start_pos, mid_sep, textlen-(start_pos-text));		
+		//repos = (char*)mail_memmem(start_pos, textlen-(start_pos-text), mid_sep, strlen(mid_sep));
+		if (NULL != repos)
+		{
+			repos += strlen(mid_sep);
+			if((textlen-(repos-text))>0 && *repos=='\n')
+                        {
+                                start_pos = repos+1;
+                        }
+                        else
+                        {
+                                start_pos = repos;
+                        }
+		}
+	}
+	/*NULL表示到buf内容结束*/
+	if ('\0' == end_sep[0])
+	{
+		res[res_num].data = start_pos;
+		res[res_num].datalen = textlen-(start_pos-text);
+		rec++;
+	}
+	else if ('\x1' == end_sep[0])
+	{
+		res[res_num].data = start_pos;
+		res[res_num].datalen = (unsigned int)end_sep[1];
+		rec++;			
+	}
+	else
+	{
+		//end_pos = (char*)mail_memmem(start_pos, textlen-(start_pos-text), end_sep, strlen(end_sep));		
+		end_pos=(char*)str_find(start_pos, end_sep, textlen-(start_pos-text));		
+		if(end_pos!=NULL)
+		{
+			if(*(end_pos-1)=='\r'  && end_pos>start_pos)
+			{
+				end_pos -=1;
+			}			
+			res[res_num].datalen = end_pos-start_pos;
+			if(res[res_num].datalen>0)
+			{
+				res[res_num].data = start_pos;
+				rec++;	
+			}			
+		}
+	}
+	return rec;	
+}
+
+int get_expect_index(sifter_inner_t* hd, int sftid, int expect_type, const char* expect_name,int* sft_index, int* ept_index)
+{
+	for(int i=0;i<hd->mnger_num;i++)
+	{
+		if(hd->mnger[i]->sifter_id==sftid)
+		{
+			for(int j=0;j<hd->mnger[i]->ept_num;j++)
+			{
+				if(hd->mnger[i]->ept[j]->expect_type==expect_type
+				   ||(0==strcasecmp(hd->mnger[i]->ept[j]->expect_name, expect_name)))
+				{
+					*ept_index = j;					
+					*sft_index = i;
+					return 0;
+				}
+			}
+		}		
+	}
+	return -1;
+}
+
+int get_text(sifter_inner_t* hd, int sft_index, int ept_index, const text_t* text, int text_num, char** cur_text, int* cur_textlen)
+{
+	for(int i=0;i<text_num;i++)
+	{
+		if(text[i].text_type==(uchar)hd->mnger[sft_index]->ept[ept_index]->expect_loc_type
+		   || (0==strcasecmp(hd->mnger[sft_index]->ept[ept_index]->expect_loc_name, text[i].text_name)))
+		{
+			*cur_text = text[i].text;
+			*cur_textlen = text[i].text_len;
+			return 0;
+		}		
+	}
+	return -1;
+
+}
+
+int mime_extract_filedata(mime_streamparam_t stream_param, mime_result_t* mime_result, void *user_arg)
+{
+	bounary_inner_t* bounary_data = (bounary_inner_t*)user_arg;
+	if(bounary_data->block_seq != mime_result->block_seq)//新块到达
+	{
+			if(0 == memcmp(bounary_data->name, mime_result->name, mime_result->namelen))
+			{
+				bounary_data->out_cont = mime_result->content;
+				bounary_data->out_cont_len = mime_result->contlen;
+			}
+			bounary_data->block_seq = mime_result->block_seq;
+	}
+	return 0;
+}
+
+/*use maat is for more hit*/
+int sifter(sifter_t handle, int sftid, 
+		   int expect_type, const char* expect_name, int expect_res_num, expect_outcome_t* res, 
+		   const text_t* text, int text_num, const char* cont_type, unsigned int cont_type_len, int thread_seq)
+{	
+	if((NULL==expect_name&&0==expect_type)||NULL==text||0==text_num||0==expect_res_num) return 0;
+	sifter_inner_t* 	hd = (sifter_inner_t*)handle;	
+	int 				rulenum = 0;
+	int 				hit_ept_type = 0;
+	int					hit_sft_id = 0;
+	char				hit_ept_name[EXPECT_NAME] = {0};
+	int					ept_rescnt = 0;
+	int 				sft_index = -1;
+	int 				ept_index = -1;
+	char*				cur_text = NULL;
+	int					cur_textlen = 0;
+	struct Maat_rule_t* maat_result = hd->mrule_buff[thread_seq];
+	struct Maat_hit_detail_t* hit_detail = NULL;
+	int 				detail_ret = 0;
+	scan_status_t                           mid = NULL;
+	
+	/*only to get extract_method, because one ept only have one expect_method*/
+	if(-1==get_expect_index(hd, sftid, expect_type, expect_name, &sft_index, &ept_index))
+	{
+		return 0;
+	}
+	if(-1==get_text(hd, sft_index, ept_index, text, text_num, &cur_text, &cur_textlen))
+	{
+		return 0;
+	}
+	
+	switch(hd->mnger[sft_index]->ept[ept_index]->extract_method)
+	{		
+		case TAG:
+		case REPOSITION:
+			//hit_detail = (struct Maat_hit_detail_t*)calloc(1,expect_res_num*sizeof(struct Maat_hit_detail_t));
+			assert(expect_res_num<MAX_INNER_RESUTL_NUM);
+			hit_detail = hd->mhit_detail[thread_seq];
+		//	memset(hit_detail, 0, expect_res_num*sizeof(struct Maat_hit_detail_t));
+			rulenum = Maat_full_scan_string_detail(hd->feather,hd->start_tableid,CHARSET_NONE,
+												   (const char*)cur_text,cur_textlen,
+												   maat_result,expect_res_num,hit_detail,expect_res_num,&detail_ret,
+												   &mid,thread_seq);	
+			if(rulenum>0)
+			{
+				for(int i=0;i<rulenum;i++)//i循环命中的配置数目
+				{			
+					hit_sft_id = maat_result[i].service_id;	
+					hit_ept_type = maat_result[i].action;
+					memcpy(hit_ept_name, maat_result[i].service_defined, maat_result[i].serv_def_len);
+					if( ept_rescnt<expect_res_num && hit_sft_id==sftid && (hit_ept_type==expect_type || 0==strcasecmp(hit_ept_name, expect_name)))
+					{
+						if(hit_detail[i].hit_region_cnt>0&&hit_detail[i].region_pos[0].sub_item_num>0&&hit_detail[i].region_pos[0].sub_item_pos[0].hit_cnt>0)
+						{
+							for(int j=0;ept_rescnt<expect_res_num && j<hit_detail[i].region_pos[0].sub_item_pos[0].hit_cnt;j++)//j循环每条配置命中的多个位置
+							{
+								if( hit_detail[i].region_pos[0].sub_item_pos[0].substr_pos[j].hit_pos!=NULL   && hit_detail[i].region_pos[0].sub_item_pos[0].substr_pos[j].hit_pos<cur_text+cur_textlen && hit_detail[i].region_pos[0].sub_item_pos[0].substr_pos[j].hit_pos>=cur_text) 
+								ept_rescnt += sifter_extract(hd->mnger[sft_index]->ept[ept_index], 
+														     hit_detail[i].region_pos[0].sub_item_pos[0].substr_pos[j].hit_pos,
+														     ept_rescnt, res, cur_text, cur_textlen);
+							}
+						}
+					}
+				}		
+			}
+			Maat_clean_status(&mid);
+			
+			break;
+			
+		case BOUNDARY:
+			/*
+			if((NULL == cont_type)||(0 == cont_type_len))
+			{
+				free(maat_result);
+				return 0;//直接返回
+			}
+				
+
+			int cb_ret;
+			
+			bounary_inner_t* user_arg;
+			memset(user_arg,0,sizeof(bounary_inner_t));
+			user_arg->block_seq = -1;
+			user_arg->name = hd->mnger[sft_index]->ept[ept_index]->start;//赋值name
+			char crlf[2];
+			strcpy(crlf,"\r\n");
+			
+			mime_streamparam_t mime_stream;
+			mime_stream = mime_stream_start(1, hd->logger, 0);
+			
+			mime_stream_feed(mime_stream, cont_type, cont_type_len, 0, mime_extract_filedata, user_arg, &cb_ret);
+			mime_stream_feed(mime_stream, crlf, 2, 0, mime_extract_filedata, user_arg, &cb_ret);
+			mime_stream_feed(mime_stream, cur_text, cur_textlen, 0, mime_extract_filedata, user_arg, &cb_ret);
+
+			if((NULL != user_arg->out_cont)&&(0 != user_arg->out_cont_len))
+			{
+				res->data = user_arg->out_cont;
+				res->datalen = user_arg->out_cont_len;
+			}
+			mime_stream_end(mime_stream);
+			*/
+			
+			break;
+			
+		case RAWTEXT:			
+			res->data = cur_text;			
+			res->datalen = cur_textlen;
+			ept_rescnt = +1;
+			break;
+
+		case END:
+			ept_rescnt += sifter_extract(hd->mnger[sft_index]->ept[ept_index],
+										 NULL,
+										 ept_rescnt, 
+										 res, 
+										 cur_text, 
+										 cur_textlen);
+			break;
+		default:
+			break;
+	}
+	return ept_rescnt;						
+}
+     
+

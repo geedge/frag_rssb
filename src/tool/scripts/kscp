@@ -1,0 +1,42 @@
+#!/usr/bin/expect -f
+if {$argc != 5} {
+	puts "usage example:./kscp test.tgz 10.52.202.1 /home/ user 'passwd'"
+		exit
+}
+set filename [lindex $argv 0]
+set sip [lindex $argv 1]
+set dir [lindex $argv 2]
+set user [lindex $argv 3]
+set passwd [lindex $argv 4]
+
+set logfile "kscp.log"
+set timeout 5 
+
+spawn scp $filename $user@$sip:$dir
+sleep 5
+expect	{
+	"(yes/no)?"
+	{
+		send "yes\r"
+			expect "*password:"
+			send "$passwd\r"
+	}
+	"*password:"
+	{
+		send "$passwd\r"
+	}
+	"Connection closed by remote host"
+	{
+		system echo " " $sip " " closed >> $logfile
+	}
+	"No route to host"
+	{
+		system echo " " $sip " " no host >> $logfile
+	}
+	timeout 
+	{
+		system echo " " $sip " " timeout >> $logfile
+	}
+}
+
+expect eof

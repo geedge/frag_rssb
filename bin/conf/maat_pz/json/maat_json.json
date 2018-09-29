@@ -1,0 +1,44 @@
+{
+    "compile_table": "TARGET_APP_COMPILE",
+    "group_table": "GROUP2",
+    "rules": [
+        {
+            "compile_id": 125,
+            "service": 1,
+            "action": 1,
+            "do_blacklist": 1,
+            "do_log": 1,
+            "effective_rage": 0,
+            "user_region": "anything",
+            "is_valid": "yes",
+            "groups": [
+                {
+                    "group_name": "group_1",
+                    "regions": [
+                        {
+                            "table_name": "TARGET_APP_NAME",
+                            "table_type": "string",
+                            "table_content": {
+                                "keywords": "Duplicate",
+                                "expr_type": "none",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "plugin_table": [
+        {
+            "table_name": "APP_PKG_INFO",
+            "table_content": [
+                "191889408\t93f6e44fab0985f5e981af2e1615c30f\t1",
+                "190644224\t3ddca28ae783b95add6b4542b2bb92cd\t1",
+                "193462272\t29f6afcdfc7ae07c2130fa07879f2787\t1",
+                "191889408\t93f6e44fab0985f5e981af2e1615c30f\t0"
+            ]
+        }
+    ]
+}

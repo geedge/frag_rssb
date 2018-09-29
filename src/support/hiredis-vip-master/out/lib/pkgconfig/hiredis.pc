@@ -1,0 +1,10 @@
+prefix=/home/zhangchengwei/soqav_dedup/soqav_project/server/src/support/hiredis-vip-master/out
+exec_prefix=${prefix}
+libdir=/home/zhangchengwei/soqav_dedup/soqav_project/server/src/support/hiredis-vip-master/out/lib
+includedir=/home/zhangchengwei/soqav_dedup/soqav_project/server/src/support/hiredis-vip-master/out/include/hiredis-vip
+
+Name: hiredis
+Description: Minimalistic C client library for Redis.
+Version: 0.3.0
+Libs: -L${libdir} -lhiredis
+Cflags: -I${includedir} -D_FILE_OFFSET_BITS=64

@@ -1,0 +1,4 @@
+TARGET_APP_COMPILE	1	./conf/maat_pz/json/maat_json.json_iris_tmp/TARGET_APP_COMPILE.local
+GROUP2	1	./conf/maat_pz/json/maat_json.json_iris_tmp/GROUP2.local
+TARGET_APP_NAME	1	./conf/maat_pz/json/maat_json.json_iris_tmp/TARGET_APP_NAME.local
+APP_PKG_INFO	4	./conf/maat_pz/json/maat_json.json_iris_tmp/APP_PKG_INFO.local

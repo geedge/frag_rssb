@@ -1,0 +1,15 @@
+[INFO]
+sft_id = 12345
+
+[EXTRACT]
+#[expect_type][expect_name] = extract_location^extract_method^start^mid^end
+#expect_type and expect_name must be one
+#sifter_method = Tag | RawText | Boundary | Reposition
+#special character : \r\n = 0xOd0xoa, \x30 = no end , \x0 = null
+#expect_name = [0]FILE_ID, [1]FRGMNT_ID, [2]FRGMNT_OFFSET, [3]FILE_SIZE, [4]FILE_NAME, [5]FILE_CONTENT
+extract_location = [61][C2S_URL], [91][S2C_CONTENT-DISPOSITION],[0xA1][C2S_CONTENT],[0xA2][S2C_CONTENT]
+[0][FILE_ID] = [62][C2S_URL]^Tag^sid=^\x0^\x30
+[1][FRGMNT_ID] = [62][C2S_URL]^Tag^sid=^\x0^\x30
+[2][FRGMNT_OFFSET] = [89][ADDR]^Tag^mid=^\x0^\x30
+[3][FILE_SIZE] = [89][ADDR]^Tag^mid=^\x0^\x30
+[4][FILE_NAME] = [89][ADDR]^Tag^mid=^\x0^\x30

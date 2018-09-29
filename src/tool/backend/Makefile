@@ -1,0 +1,54 @@
+vpath %.a ../lib
+vpath %.h ./inc
+
+PAPP_PATH=/home/mesasoft/frag_rssb/
+
+#CFLAGS          =  -g3 -Wall -fPIC -Werror -O
+#CFLAGS          =  -g3 -Wall -fPIC -O
+INCLUDES        = -I./inc/
+INCLUDES        += -I/usr/include/MESA/
+#INCLUDES        += -I./support/hiredis-vip-master/
+CFLAGS          =  -g3 -Wall -fPIC -D__STDC_FORMAT_MACROS
+CFLAGS	       	+= $(INCLUDES)
+#LDDICTATOR      = -Wl,-wrap,malloc -Wl,-wrap,calloc -Wl,-wrap,free -Wl,-wrap,realloc
+LDDICTATOR      =
+CC              = g++
+CCC             = g++
+
+LIB		= -L./lib/ 
+LIB		+= -lMESA_handle_logger  -lMESA_htable -lpthread -lrt
+LIB		+= ./lib/libmy_socket.a 
+LIB		+= ./lib/usm_comm.a 
+#LIB		+= ./lib/libdictator_debug.a
+
+LIB_FILE	= $(wildcard ../lib/*.a)
+SOURCES		= $(wildcard *.c)
+SOURCESCPP  = $(wildcard *.cpp)
+OBJECTS 	= $(SOURCES:.c=.o)
+OBJECTSCPP  = $(SOURCESCPP:.cpp=.o)
+#DEPS		= $(SOURCES:.c=.d)
+
+
+TARGET		= backend
+
+.PHONY:clean all 
+
+all:$(TARGET)
+
+$(TARGET):$(OBJECTS) $(OBJECTSCPP)  $(LIB_FILE)
+	#$(CCC) -shared $(CFLAGS) $(OBJECTS) $(LIB) -o $@
+	$(CCC) $(CFLAGS) $(OBJECTS) $(OBJECTSCPP)  $(LIB) $(LDDICTATOR) -o $@
+	
+.c.o:
+#%.d:%.c
+#	$(CCC) $< -MM $(INCLUDES) > $@
+
+.cpp.o:
+#%.dpp:%.cpp
+	$(CCC) $(CFLAGS) -c $<
+
+-include $(DEPS)
+
+clean :
+	rm -f $(OBJECTS) $(DEPS) $(TARGET) 
+
