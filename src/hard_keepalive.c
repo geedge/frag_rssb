@@ -106,12 +106,13 @@ int create_send_udp_socket()
 void* thread_hard_keepalive(void *param)
 {
 	char		buf[1500] = {0};
-	long		port = (long)param;	
+	char		discriminator_temp[ID_SIZE] = {0};
+	bfd_port_t*	bfd_port = (bfd_port_t*)param;
 	int			size = 0;
 	uint32_t	src_ip = 0;	
 	int			send_rec = 0;
 	fd_set 		rset;
-	int			recv_pkt_sd = create_recv_udp_socket(htons(port));
+	int			recv_pkt_sd = create_recv_udp_socket(htons(bfd_port->recv_port));
 	int			send_pkt_sd = create_send_udp_socket();
 	
 	if(-1==recv_pkt_sd || -1==send_pkt_sd)
@@ -133,9 +134,13 @@ void* thread_hard_keepalive(void *param)
 			size = udp_socket_recv(recv_pkt_sd, &src_ip, (unsigned char*)buf, sizeof(buf));			
 			if(size>0)
 			{
+				/*½»»»discriminator*/
+				memcpy(discriminator_temp, buf+MY_ID_OFFSET, ID_SIZE);
+				memcpy(buf+MY_ID_OFFSET, buf+YOUR_ID_OFFSET, ID_SIZE);
+				memcpy(buf+YOUR_ID_OFFSET, discriminator_temp, ID_SIZE);
 				send_rec = udp_socket_send(send_pkt_sd,
 												src_ip,
-												htons(port),
+												htons(bfd_port->send_port),
 												(char*)buf,size);
 				if(-1==send_rec)
 				{
@@ -152,10 +157,8 @@ void* thread_hard_keepalive(void *param)
 	return NULL;
 }
 
-int hard_keepalive_run(uint32_t udp_port)
+int hard_keepalive_run(void* bfd_port)
 {
-	if(udp_port<=0) return -1;	
-	
 	pthread_t	 	thread_desc;
 	pthread_attr_t 	attr;
 
@@ -170,7 +173,7 @@ int hard_keepalive_run(uint32_t udp_port)
     {		
 		return -1;
 	}
-	if(0 != pthread_create(&(thread_desc), &(attr), thread_hard_keepalive, (void*)udp_port)) 
+	if(0 != pthread_create(&(thread_desc), &(attr), thread_hard_keepalive, (void*)bfd_port)) 
     {
 		pthread_attr_destroy(&(attr));
 		return -1;

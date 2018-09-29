@@ -241,7 +241,8 @@ typedef struct frag_rssb_configure_s
 	uint32_t                    health_check_port;
 	int16_t						save_media;
 	
-	uint32_t                    hard_balance_port;
+	uint32_t                    bfd_recv_port;
+	uint32_t                    bfd_send_port;
 }frag_rssb_configure_t;
 
 typedef struct frag_rssb_status_s
