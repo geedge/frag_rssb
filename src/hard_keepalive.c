@@ -19,7 +19,7 @@
 
 #include "hard_keepalive.h"
 
-int udp_socket_recv(int sockfd, uint32_t *src_ip, uint8_t *buf, uint32_t buf_size)
+int udp_socket_recv(int sockfd, uint32_t *src_ip, uint16_t *src_port, uint8_t *buf, uint32_t buf_size)
 {
     if (NULL == buf)     return -1;
 
@@ -32,7 +32,8 @@ int udp_socket_recv(int sockfd, uint32_t *src_ip, uint8_t *buf, uint32_t buf_siz
         perror("recvfrom");
         return -1;
     }
-    *src_ip = ((struct sockaddr_in *)&their_addr)->sin_addr.s_addr;
+    *src_ip = ((struct sockaddr_in *)&their_addr)->sin_addr.s_addr;	
+    *src_port = ((struct sockaddr_in *)&their_addr)->sin_port;
     return numbytes;
 }
 
@@ -92,17 +93,6 @@ int create_recv_udp_socket(uint16_t port)
     return sockfd;
 }
 
-
-int create_send_udp_socket()
-{
-    int sockfd = socket(AF_INET, SOCK_DGRAM, 0); 
-    if (-1 == sockfd) 
-	{
-        return -1;
-    }
-    return sockfd;
-}
-
 void* thread_hard_keepalive(void *param)
 {
 	char		buf[1500] = {0};
@@ -110,12 +100,12 @@ void* thread_hard_keepalive(void *param)
 	bfd_port_t*	bfd_port = (bfd_port_t*)param;
 	int			size = 0;
 	uint32_t	src_ip = 0;	
+	uint16_t	src_port = 0;	
 	int			send_rec = 0;
 	fd_set 		rset;
 	int			recv_pkt_sd = create_recv_udp_socket(htons(bfd_port->recv_port));
-	int			send_pkt_sd = create_send_udp_socket();
 	
-	if(-1==recv_pkt_sd || -1==send_pkt_sd)
+	if(-1==recv_pkt_sd)
 	{
 		printf("hard_keepalive create socket error.\n");		
 		return NULL;
@@ -131,16 +121,16 @@ void* thread_hard_keepalive(void *param)
 		}
 		if(FD_ISSET(recv_pkt_sd, &rset))
 		{
-			size = udp_socket_recv(recv_pkt_sd, &src_ip, (unsigned char*)buf, sizeof(buf));			
+			size = udp_socket_recv(recv_pkt_sd, &src_ip, &src_port, (unsigned char*)buf, sizeof(buf));			
 			if(size>0)
 			{
 				/*½»»»discriminator*/
 				memcpy(discriminator_temp, buf+MY_ID_OFFSET, ID_SIZE);
 				memcpy(buf+MY_ID_OFFSET, buf+YOUR_ID_OFFSET, ID_SIZE);
 				memcpy(buf+YOUR_ID_OFFSET, discriminator_temp, ID_SIZE);
-				send_rec = udp_socket_send(send_pkt_sd,
+				send_rec = udp_socket_send(recv_pkt_sd,
 												src_ip,
-												htons(bfd_port->send_port),
+												src_port,
 												(char*)buf,size);
 				if(-1==send_rec)
 				{

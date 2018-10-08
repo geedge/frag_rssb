@@ -242,7 +242,6 @@ typedef struct frag_rssb_configure_s
 	int16_t						save_media;
 	
 	uint32_t                    bfd_recv_port;
-	uint32_t                    bfd_send_port;
 }frag_rssb_configure_t;
 
 typedef struct frag_rssb_status_s
