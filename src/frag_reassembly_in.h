@@ -111,7 +111,7 @@ typedef enum
 /*SIP选项个数*/
 #define 	SIP_OPT_NUM								32
 /*SIP查询redis的命令个数*/
-#define 	SIP_REDIS_CMMD_NUM						34
+#define 	SIP_REDIS_CMMD_NUM						35
 /*SIP的选型*/
 typedef struct sip_opt_s
 {

@@ -42,7 +42,7 @@ const char* frag_rssb_version = "2018-08-13T09:00:00";
 const char* frag_rssb_version_time = "2018-08-13T09:00:00";
 const char* frag_rssb_version_des = "MESA@iie rssb_maskey";
 
-int FRAG_RSSB_VERSION_1_0_20180927 = 0;
+int FRAG_RSSB_VERSION_1_0_20181008 = 0;
 const char* frag_rssb_version_time_in = "2018-09-27";
 const char* frag_rssb_version_des_in = "hard balance";
 void frag_rssb_history()
@@ -218,6 +218,7 @@ void frag_rssb_history()
    //2018.09.13	   v4.0 //1.frag removal 
    //2018.09.20    v4.0//1 voip_fulllog add voice_dir opt
    //2018.09.27	   v4.0 //1. hard balance
+   //2018.10.08 	   v4.0//1.add send_voip_full_json_log for K_PROJECT;2.voip_fulllog and voip_surveylog add voice_dir and cap_ip opt
 }
 
 frag_rssb_parameter_t 		g_frag_run;
@@ -369,26 +370,40 @@ int multimedia_read_conf_and_init(const char* filename)
 								__FILE__,__LINE__, TOPIC_SURVEY_JSON);
 	}
 	if((g_frag_run.kafka_producer->CreateTopicHandle(TOPIC_VOIP_CREATE_JSON)) == NULL)
-        {
-                printf("Kafka CreateTopicHandle %s failed.", TOPIC_VOIP_CREATE_JSON);
-                MESA_handle_runtime_log(g_frag_run.logger, RLOG_LV_FATAL, FRAG_REASSEMBLY_MODULE_NAME,
-                                                                "{%s:%d} Kafka CreateTopicHandle %s failed.",
-                                                                __FILE__,__LINE__, TOPIC_VOIP_CREATE_JSON);
-        }
-        if((g_frag_run.kafka_producer->CreateTopicHandle(TOPIC_VOIP_EXPIRE_JSON)) == NULL)
-        {
-                printf("Kafka CreateTopicHandle %s failed.", TOPIC_VOIP_EXPIRE_JSON);
-                MESA_handle_runtime_log(g_frag_run.logger, RLOG_LV_FATAL, FRAG_REASSEMBLY_MODULE_NAME,
-                                                                "{%s:%d} Kafka CreateTopicHandle %s failed.",
-                                                                __FILE__,__LINE__, TOPIC_VOIP_EXPIRE_JSON);
-        }
-        if((g_frag_run.kafka_producer->CreateTopicHandle(TOPIC_VOIP_SURVEY_JSON)) == NULL)
-        {
-                printf("Kafka CreateTopicHandle %s failed.", TOPIC_VOIP_SURVEY_JSON);
-                MESA_handle_runtime_log(g_frag_run.logger, RLOG_LV_FATAL, FRAG_REASSEMBLY_MODULE_NAME,
-                                                                "{%s:%d} Kafka CreateTopicHandle %s failed.",
-                                                                __FILE__,__LINE__, TOPIC_VOIP_SURVEY_JSON);
-        }
+    {
+            printf("Kafka CreateTopicHandle %s failed.", TOPIC_VOIP_CREATE_JSON);
+            MESA_handle_runtime_log(g_frag_run.logger, RLOG_LV_FATAL, FRAG_REASSEMBLY_MODULE_NAME,
+                                                            "{%s:%d} Kafka CreateTopicHandle %s failed.",
+                                                            __FILE__,__LINE__, TOPIC_VOIP_CREATE_JSON);
+    }
+    if((g_frag_run.kafka_producer->CreateTopicHandle(TOPIC_VOIP_EXPIRE_JSON)) == NULL)
+    {
+            printf("Kafka CreateTopicHandle %s failed.", TOPIC_VOIP_EXPIRE_JSON);
+            MESA_handle_runtime_log(g_frag_run.logger, RLOG_LV_FATAL, FRAG_REASSEMBLY_MODULE_NAME,
+                                                            "{%s:%d} Kafka CreateTopicHandle %s failed.",
+                                                            __FILE__,__LINE__, TOPIC_VOIP_EXPIRE_JSON);
+    }
+    if((g_frag_run.kafka_producer->CreateTopicHandle(TOPIC_VOIP_SURVEY_JSON)) == NULL)
+    {
+            printf("Kafka CreateTopicHandle %s failed.", TOPIC_VOIP_SURVEY_JSON);
+            MESA_handle_runtime_log(g_frag_run.logger, RLOG_LV_FATAL, FRAG_REASSEMBLY_MODULE_NAME,
+                                                            "{%s:%d} Kafka CreateTopicHandle %s failed.",
+                                                            __FILE__,__LINE__, TOPIC_VOIP_SURVEY_JSON);
+    }
+	if((g_frag_run.kafka_producer->CreateTopicHandle(TOPIC_MM_SAMPLE_VOIP_LOG)) == NULL)
+	{
+		printf("Kafka CreateTopicHandle %s failed.", TOPIC_MM_SAMPLE_VOIP_LOG);
+		MESA_handle_runtime_log(g_frag_run.logger, RLOG_LV_FATAL, FRAG_REASSEMBLY_MODULE_NAME, 
+								"{%s:%d} Kafka CreateTopicHandle %s failed.", 
+								__FILE__,__LINE__, TOPIC_MM_SAMPLE_VOIP_LOG);
+	}
+	if((g_frag_run.kafka_producer->CreateTopicHandle(TOPIC_NTC_COLLECT_VOIP_LOG)) == NULL)
+	{
+		printf("Kafka CreateTopicHandle %s failed.", TOPIC_NTC_COLLECT_VOIP_LOG);
+		MESA_handle_runtime_log(g_frag_run.logger, RLOG_LV_FATAL, FRAG_REASSEMBLY_MODULE_NAME, 
+								"{%s:%d} Kafka CreateTopicHandle %s failed.", 
+								__FILE__,__LINE__, TOPIC_NTC_COLLECT_VOIP_LOG);
+	}
 	return 0;
 }
 

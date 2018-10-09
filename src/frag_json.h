@@ -15,6 +15,8 @@
 #define TOPIC_VOIP_EXPIRE_JSON                                                                                 "VOIP_EXPIRE_INFO"
 #define TOPIC_VOIP_SURVEY_JSON                                                                                 "VOIP_SURVEY_INFO"
 
+#define TOPIC_MM_SAMPLE_VOIP_LOG																			"MM-SAMPLE-VOIP-LOG" 
+#define TOPIC_NTC_COLLECT_VOIP_LOG																			"NTC-COLLECT-VOIP-LOG" 
 #ifdef __cplusplus
 extern "C" {
 #endif

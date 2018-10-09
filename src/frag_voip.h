@@ -27,6 +27,7 @@
 #define SIP_RTP_4TUPLE_OPT_INDEX  			0
 #define SIP_SIP_4TUPLE_OPT_INDEX  			23
 #define SIP_DURATION_OPT_INDEX  			6
+#define SIP_CAPIP_OPT_INDEX  				31
 
 #define SIP_PROTO_SIP 					"SIP-RTP"
 #define SIP_PROTO_RTP 					"RTP"
@@ -49,6 +50,7 @@
 #define OPT_VOIP_PID 						0x29
 #define OPT_VOIP_DUATION_FULLLOG			0x2A
 #define OPT_VOIP_VOICE_DIR_FULLLOG			0x2B
+#define OPT_VOIP_CAP_IP_FULLLOG				0x2C
 
 /*监测日志选项类型*/
 #define OPT_LAYER_ADDR_V4 					0x3B //0x3B:RTP, 0x2D:SIP, change
@@ -62,6 +64,8 @@
 #define OPT_VOIP_FROM_TO_STORE_URL 			0x37
 #define OPT_VOIP_TO_FROM_STORE_IP 			0x38
 #define OPT_VOIP_TO_FROM_STORE_URL 			0x39
+#define OPT_VOIP_VOICE_DIR 					0x3C
+#define OPT_VOIP_CAP_IP			 			0x3D
 
 /*sip_sendlog_flag*/
 #define SIP_SEND_FULL_LOG 					0x01
@@ -75,6 +79,7 @@
 /*RTP数据前8个字节，4个字节的时间戳，4个字节的rtp_seq*/
 #define VOIP_DATA_SEQ_OFFSET				4
 #define VOIP_DATA_TIME_SEQ_LEN				8
+
 
 typedef struct sip_fulllog_msg_body_s 
 {

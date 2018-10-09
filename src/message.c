@@ -384,7 +384,7 @@ void send_json_log(media_t* mdi, resp_checkresult_t* check_res)
 
 	cJSON*	root = NULL;
 
-	string	topic_name = TOPIC_VOIP_SURVEY_JSON;
+	string	topic_name = TOPIC_MM_SAMPLE_VOIP_LOG;
 	char pid_buf[64] = {0};
 	char pbuf[32] = {0}; 
 
@@ -401,7 +401,7 @@ void send_json_log(media_t* mdi, resp_checkresult_t* check_res)
 	cJSON_AddNumberToObject(root, "found_time", mdi->create_time);
 	cJSON_AddNumberToObject(root, "recv_time", time(NULL));
 	cJSON_AddNumberToObject(root, "fd_type", FD_TYPE_ANALYSE);
-	cJSON_AddStringToObject(root, "voip_protocol", "RTP");
+	cJSON_AddStringToObject(root, "voip_protocol", SIP_PROTO_RTP);
 
 	memset(pbuf, 0, sizeof(pbuf));
 	inet_ntop(AF_INET, &g_frag_cfg.local_ip_nr, pbuf, sizeof(pbuf)); 		
