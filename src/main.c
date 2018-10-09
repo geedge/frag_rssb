@@ -43,7 +43,7 @@ const char* frag_rssb_version_time = "2018-08-13T09:00:00";
 const char* frag_rssb_version_des = "MESA@iie rssb_maskey";
 
 int FRAG_RSSB_VERSION_1_0_20181008 = 0;
-const char* frag_rssb_version_time_in = "2018-09-27";
+const char* frag_rssb_version_time_in = "2018-10-08";
 const char* frag_rssb_version_des_in = "hard balance";
 void frag_rssb_history()
 {
@@ -756,7 +756,6 @@ int read_conf_and_init(const char* filename)
 	MESA_load_profile_uint_def(filename, "WLB", "wlb_report_interval", (unsigned int*)&g_frag_cfg.wlb_report_interval,10);		
 	MESA_load_profile_uint_def(filename, "WLB", "enable_override", (unsigned int*)&g_frag_cfg.enable_override,0);	
 	MESA_load_profile_uint_def(filename, "WLB", "bfd_recv_port", (unsigned int*)&g_frag_cfg.bfd_recv_port,0);	
-	MESA_load_profile_uint_def(filename, "WLB", "bfd_send_port", (unsigned int*)&g_frag_cfg.bfd_send_port,0);	
 
 	/*send bizman :粗拼装往前端发数据，监听响应端口*/	
 	MESA_load_profile_short_def(filename, "NETWORK", "BizmanAckPort", (short*)&g_frag_cfg.bizman_ack_port,22084);		
@@ -1297,11 +1296,10 @@ int   main(int argc, char **argv)
     	}
 	}
 
-	if(g_frag_cfg.bfd_recv_port>0 && g_frag_cfg.bfd_send_port>0)
+	if(g_frag_cfg.bfd_recv_port>0)
 	{
 		bfd_port_t bfd_port;
 		bfd_port.recv_port = g_frag_cfg.bfd_recv_port;
-		bfd_port.send_port = g_frag_cfg.bfd_send_port;
 		hard_keepalive_run(&bfd_port);
 	}	
 	
