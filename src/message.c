@@ -409,7 +409,7 @@ void send_json_log(media_t* mdi, resp_checkresult_t* check_res)
 
 	memset(pbuf, 0, sizeof(pbuf));
 	snprintf(pbuf, sizeof(pbuf), "%" PRIu64 "", mdi->lastpkt_time - mdi->create_time);
-	cJSON_AddStringToObject(root, "duation", pbuf);
+	cJSON_AddStringToObject(root, "duration", pbuf);
 	
 	if((NULL != mdi->sip_opt[SIP_FROM_OPT_INDEX])&&(mdi->sip_opt[SIP_FROM_OPT_INDEX]->opt_len > 0)&&(NULL != mdi->sip_opt[SIP_FROM_OPT_INDEX]->opt_value))
 	{

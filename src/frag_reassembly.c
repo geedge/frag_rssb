@@ -410,6 +410,7 @@ void set_sip_query_task(frag_unit_t* frg_unit, media_t* mdi)
 						   context,
 						   index_query_timeout_free,
 						   &mdi->index_query_timer_idx);
+			g_frag_run.index_query_timer_on[mdi->thread_seq] = 1;
 		}			
 	}
 }
@@ -467,6 +468,7 @@ void save_media_opt(frag_unit_t* frg_unit, media_t* mdi)
 						   context,
 						   index_query_timeout_free,
 						   &mdi->index_query_timer_idx);
+			g_frag_run.index_query_timer_on[mdi->thread_seq] = 1;
 		}
 	}		
 }
@@ -677,12 +679,12 @@ int media_create(frag_unit_t* frg_unit)
 	long  			rec_cb = 0;
 
 	/*检查定时器*/	
-	if(g_frag_cfg.av_dedup_switch && g_frag_run.multisrc_timer[frg_unit->thread_seq])
+	if(g_frag_cfg.av_dedup_switch && g_frag_run.multisrc_timer_on[frg_unit->thread_seq] && g_frag_run.multisrc_timer[frg_unit->thread_seq])
 	{
 		MESA_timer_check(g_frag_run.multisrc_timer[frg_unit->thread_seq], time(NULL), g_frag_cfg.multisrc_timer_cb_maxtime);
 	}
 	/*检查定时器*/	
-	if(g_frag_run.index_query_timer[frg_unit->thread_seq])
+	if(g_frag_run.index_query_timer_on[frg_unit->thread_seq] && g_frag_run.index_query_timer[frg_unit->thread_seq])
 	{
 		MESA_timer_check(g_frag_run.index_query_timer[frg_unit->thread_seq], time(NULL), g_frag_cfg.index_query_timer_cb_maxtime);
 	}
@@ -1060,11 +1062,14 @@ long media_preproc_cb(void *data, const uint8_t *key, uint size, void *user_arg)
 	{
 		if(g_frag_cfg.cpz_type == CPZ_VOIP)
 		{
-			uint32_t datalen = frg->datalen - sizeof(voip_header_t);
-			char* data = (char*)calloc(1,datalen);
-			memcpy(data,frg->data + sizeof(voip_header_t),datalen);
-			IVI_seg_t* a_ivi_seg = IVI_seg_malloc(frg->offset, frg->offset + datalen - 1, data);
-			IVI_insert(mdi->save_ivi,a_ivi_seg);
+			if(frg->datalen > sizeof(voip_header_t))
+			{
+				uint32_t datalen = frg->datalen - sizeof(voip_header_t);
+				char* data = (char*)calloc(1,datalen);
+				memcpy(data,frg->data + sizeof(voip_header_t),datalen);
+				IVI_seg_t* a_ivi_seg = IVI_seg_malloc(frg->offset, frg->offset + datalen - 1, data);
+				IVI_insert(mdi->save_ivi,a_ivi_seg);
+			}
 		}
 		else
 		{

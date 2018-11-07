@@ -183,6 +183,7 @@ void* bizman_recv_data_to_queue(void *param)
 		size = bizman_recv(g_frag_run.recv_bizman[tid],(char*)buf,sizeof(buf),&src_ip,&src_port,&stream_id,&is_complete);
 		if(is_complete&BIZMAN_READ_CHUNK && size>0)
 		{
+			
 			if(g_frag_stat.sysinfo_stat[BIZMAN_RECV_QUEUE][QUEUE_CURRENT]<g_frag_cfg.bizman_queue_maxnum)
 			{
 				recv_data = (bizman_recv_data_t*)calloc(1, sizeof(bizman_recv_data_t));
@@ -190,12 +191,10 @@ void* bizman_recv_data_to_queue(void *param)
 				recv_data->src_ip = src_ip;			
 				recv_data->data = (char*)malloc(size);
 				memcpy(recv_data->data, buf, size);			
-				/*data[15] = the last byte of PID*/
 				tid = recv_data->data[15]%g_frag_cfg.thread_num;				
 				lq_rec = MESA_lqueue_join_tail(g_frag_run.recv_bizman_lq[tid], &recv_data, sizeof(recv_data));				
 				if(lq_rec==MESA_QUEUE_RET_OK)
 				{
-					/*add to queue stat */
 					atomic_inc(&g_frag_stat.sysinfo_stat[BIZMAN_RECV_QUEUE][QUEUE_IN]); 
 				}
 				else
@@ -209,6 +208,7 @@ void* bizman_recv_data_to_queue(void *param)
 			{
 				atomic_inc(&g_frag_stat.stat_info[RECV_DROP][TOTAL_PKTS]);
 				atomic_add(&g_frag_stat.stat_info[RECV_DROP][TOTAL_BYTES], size);
+			
 			}
 			atomic_inc(&g_frag_stat.stat_info[RECV][TOTAL_PKTS]);
 			atomic_add(&g_frag_stat.stat_info[RECV][TOTAL_BYTES], size);

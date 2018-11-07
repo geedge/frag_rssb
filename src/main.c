@@ -42,9 +42,9 @@ const char* frag_rssb_version = "2018-08-13T09:00:00";
 const char* frag_rssb_version_time = "2018-08-13T09:00:00";
 const char* frag_rssb_version_des = "MESA@iie rssb_maskey";
 
-int FRAG_RSSB_VERSION_1_0_20181008 = 0;
-const char* frag_rssb_version_time_in = "2018-10-08";
-const char* frag_rssb_version_des_in = "hard balance";
+int FRAG_RSSB_VERSION_1_0_20181107 = 0;
+const char* frag_rssb_version_time_in = "2018-11-07";
+const char* frag_rssb_version_des_in = "alter json_log opt name for k";
 void frag_rssb_history()
 {
 	//2015.11.15  v1.0  create the project	
@@ -219,6 +219,10 @@ void frag_rssb_history()
    //2018.09.20    v4.0//1 voip_fulllog add voice_dir opt
    //2018.09.27	   v4.0 //1. hard balance
    //2018.10.08 	   v4.0//1.add send_voip_full_json_log for K_PROJECT;2.voip_fulllog and voip_surveylog add voice_dir and cap_ip opt
+   //2018.10.22    v4.0//alter g_sip_opt_type and  add enum sip_opt_index
+   //2018.11.02	   v4.0//add timer_on
+   //2018.11.05	   v4.0//alter voip save_media frg_len>headerlen
+   //2018.11.07    v4.0//alter json_log opt name for k
 }
 
 frag_rssb_parameter_t 		g_frag_run;
@@ -1258,19 +1262,23 @@ int   main(int argc, char **argv)
 	else 
 	{
 		g_frag_run.recv_bizman_lq = (MESA_lqueue_head*)calloc(1, g_frag_cfg.thread_num*sizeof(MESA_lqueue_head));
-    	for(i=0;i<g_frag_cfg.thread_num;i++)
-    	{		
+	
+    		for(i=0;i<g_frag_cfg.thread_num;i++)
+    		{		
 			g_frag_run.recv_bizman_lq[i] =  MESA_lqueue_create(1, 0);
+		}
+		for(i=0;i<g_frag_cfg.thread_num;i++)
+		{	
 			if(-1 == create_pthread(bizman_recv_data_to_queue, (void*)i, g_frag_run.logger))
 			{
 				MESA_handle_runtime_log(g_frag_run.logger, RLOG_LV_FATAL, FRAG_REASSEMBLY_MODULE_NAME, 
 										(char*)"[%s:%d] Thread bizman_recv_data_to_queue Create Failed." , __FILE__,__LINE__,FRAG_REASSEMBLY_MODULE_NAME);
 				return -1;
 			} 
-    	}
+    		}	
 		
 		for(i=0;i<g_frag_cfg.thread_num;i++)
-    	{    	
+    		{    	
 			if(-1 == create_pthread(bizman_recv_data_from_queue,(void*)i,g_frag_run.logger))
 			{
 				MESA_handle_runtime_log(g_frag_run.logger, RLOG_LV_FATAL, FRAG_REASSEMBLY_MODULE_NAME, 

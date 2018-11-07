@@ -16,7 +16,7 @@
 #include 	"main.h"
 #include 	"sifter.h"
 #include 	"frag_reassembly.h"
-#include 	"frag_reassembly_in.h"
+//#include 	"frag_voip.h"
 
 #define		LAY_ADDR_CNT						8
 #define		PID_MAX_LEN							64
@@ -109,9 +109,55 @@ typedef enum
 #define		WEBMAIL_CONT_INFO_NUM					10
 
 /*SIP选项个数*/
-#define 	SIP_OPT_NUM								32
+typedef enum
+{
+        SIP_HMGET_INDEX,//NOT SAVE OPT
+        SIP_KEY_INDEX,//NOT SAVE OPT
+        SIP_DATA_FLAG_INDEX,//NOT SAVE OPT
+        SIP_RTP_4TUPLE_OPT_INDEX,//NOT SAVE OPT
+        SIP_URI_OPT_INDEX,
+
+        SIP_FROM_OPT_INDEX,
+        SIP_TO_OPT_INDEX,
+        SIP_SGATEWAY_OPT_INDEX,//NOT NEED SENDBACK
+        SIP_CGATEWAY_OPT_INDEX,//NOT NEED SENDBACK
+        SIP_DURATION_OPT_INDEX,
+
+        SIP_S_CODING_OPT_INDEX,
+        SIP_C_CODING_OPT_INDEX,
+        SIP_FROM_TAGS_OPT_INDEX,
+        SIP_TO_TAGS_OPT_INDEX,
+        SIP_CALL_ID_OPT_INDEX,
+
+        SIP_CSEQ_OPT_INDEX,
+        SIP_C_CONTACT_OPT_INDEX,
+        SIP_S_CONTACT_OPT_INDEX,
+        SIP_USERAGENT_OPT_INDEX,
+        SIP_SERVER_OPT_INDEX,//NOT NEED SENDBACK
+
+        SIP_C_CRYPTO_OPT_INDEX,//NOT NEED SENDBACK
+        SIP_C_INLINE_OPT_INDEX,//NOT NEED SENDBACK
+        SIP_S_CRYPTO_OPT_INDEX,//NOT NEED SENDBACK
+        SIP_S_INLINE_OPT_INDEX,//NOT NEED SENDBACK
+        SIP_RINGING_OPT_INDEX,//NOT NEED SENDBACK
+
+        SIP_REASON_OPT_INDEX,
+        SIP_SIP_4TUPLE_OPT_INDEX,
+        SIP_S_VIA_OPT_INDEX,
+        SIP_S_RECORD_ROUTES_OPT_INDEX,
+        SIP_S_ROUTE_OPT_INDEX,
+
+        SIP_C_VIA_OPT_INDEX,
+        SIP_C_RECORD_ROUTES_OPT_INDEX,
+        SIP_C_ROUTE_OPT_INDEX,
+        SIP_RESCODE_OPT_INDEX,
+        SIP_CAPIP_OPT_INDEX,
+
+        SIP_OPT_NUM,
+}sip_opt_index;
+//#define 	SIP_OPT_NUM								33
 /*SIP查询redis的命令个数*/
-#define 	SIP_REDIS_CMMD_NUM						35
+//#define 	SIP_REDIS_CMMD_NUM						35
 /*SIP的选型*/
 typedef struct sip_opt_s
 {

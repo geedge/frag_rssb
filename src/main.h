@@ -5,7 +5,7 @@
 #include </usr/include/stdint.h>
 
 #define	APP_FUNC														0  //手机APP
-#define	VOIP_FUNC														0  //VOIP 主要是配置文件不一致
+#define	VOIP_FUNC														1  //VOIP 主要是配置文件不一致
 #define	PIC_FUNC														0  //PIC 主要是配置文件不一致
 
 #include "MESA_list_queue.h"
@@ -62,11 +62,13 @@ typedef struct frag_rssb_parameter_s
 	MESA_htable_handle			media_hash; 						//media_hash	
 
 	MESA_timer_t*				index_query_timer[MAX_THREAD_NUM]; 	
+	char					index_query_timer_on[MAX_THREAD_NUM]; 	
 
 	/*多源降载业务*/
 	void*						dedup_hd;							//av_dedup_handle
 	void*						dedup_logger;						//av_dedup log
 	MESA_timer_t*				multisrc_timer[MAX_THREAD_NUM]; 	
+	char					multisrc_timer_on[MAX_THREAD_NUM]; 	
 	
 	KafkaProducer*				kafka_producer; 					//kafka
 

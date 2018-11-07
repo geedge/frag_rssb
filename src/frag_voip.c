@@ -49,41 +49,45 @@ extern frag_reassembly_t 			frag_rssb;
 int g_voip_fulllog_sock_fd = -1;
 int g_voip_surveylog_sock_fd = -1;
 
-const char* g_sip_cmmd_argv[SIP_REDIS_CMMD_NUM] =
+const char* g_sip_cmmd_argv[SIP_OPT_NUM] =
 {
         "HMGET",
         "",        
         "data_flag",
         "RTP_4tuple",
         "URI",
-        "From",
+        
+	"From",
         "To",
         "S_gateway",
         "C_gateway",
         "Duration",
-        "S_coding",
+        	
+	"S_coding",
         "C_coding",
-
         "From_tag",
         "To_tag",
         "Call_ID",
-        "CSeq",
+        
+	"CSeq",
         "C_Contact",
         "S_Contact",
         "User_Agent",
         "Server",
-        "C_crypto",
+        
+	"C_crypto",
         "C_inline",
         "S_crypto",
         "S_inline",
-
         "Ringing_time",
-        "Reason",
+        
+	"Reason",
         "SIP_4tuple",
         "S_Via",
         "S_Record_Route",
         "S_Route",
-        "C_Via",
+        
+	"C_Via",
         "C_Record_Route",
         "C_Route",
         "Rescode",        
@@ -93,40 +97,46 @@ const char* g_sip_cmmd_argv[SIP_REDIS_CMMD_NUM] =
 /*opt_type is fulllog opt_type*/
 sip_opt_t	g_sip_opt_type[SIP_OPT_NUM] = 
 {
-	{	"RTP_4tuple", 		0xFF},
+	{	"HMGET",			0xFF},
+        {	"",				0xFF},
+        {	"data_flag",			0xFF},
+	{	"RTP_4tuple", 			0xFF},
 	{	"URI",				0x20},
+	
 	{	"From",				0x25},
 	{	"To",				0x26},
-	{	"S_gateway",		0xFF},
-	{	"C_gateway",		0xFF},
-	{	"Duration",			0x2A},	//6
-	{	"S_coding",			0x24}, //7
-	{	"C_coding",			0x23}, //8
-		
-	{	"From_tag",			0xFF},	//9
-	{	"To_tag",			0xFF},	//10
-	{	"Call_ID",			0xFF},  //11
-	{	"CSeq",				0xFF},  //12
-	{	"C_Contact",		0x21},  //13
-	{	"S_Contact",		0x21},	//14
-	{	"User_Agent",		0xFF},  //15
+	{	"S_gateway",			0xFF},
+	{	"C_gateway",			0xFF},
+	{	"Duration",			0x2A},
+	
+	{	"S_coding",			0x24}, 
+	{	"C_coding",			0x23},	
+	{	"From_tag",			0xFF},
+	{	"To_tag",			0xFF},
+	{	"Call_ID",			0xFF},
+	
+	{	"CSeq",				0xFF},
+	{	"C_Contact",			0x21},  
+	{	"S_Contact",			0x21},//14
+	{	"User_Agent",			0xFF},  //15
 	{	"Server",			0xFF},
+	
 	{	"C_crypto",			0xFF},
 	{	"C_inline",			0xFF},
 	{	"S_crypto",			0xFF},
-	{	"S_inline", 		0xFF},
-
-	{	"Ringing_time",		0xFF},
+	{	"S_inline", 			0xFF},
+	{	"Ringing_time",			0xFF},
+	
 	{	"Reason",			0xFF},  //22
-	{	"SIP_4tuple",		0xFF},  //23
+	{	"SIP_4tuple",			0xFF},  //23
 	{	"S_Via",			0x22},	//24
-	{	"S_Record_Route",	0x27},  //25
+	{	"S_Record_Route",		0x27},  //25
 	{	"S_Route",			0x28},  //26
+	
 	{	"C_Via",			0x22},  //27
-	{	"C_Record_Route",	0x27},  //28
+	{	"C_Record_Route",		0x27},  //28
 	{	"C_Route",			0x28},	//29	
 	{	"Rescode",			0xFF},	//30
-	
 	{	"CAPIP",			0x2C},	//31
 };
 
@@ -499,6 +509,7 @@ int sip_send_survey_log(media_t* mdi, char* survey, uint32_t survey_len)
 	char sip_capip[128]={0};
 	if(NULL!=mdi->sip_opt[SIP_CAPIP_OPT_INDEX])
 	{
+		strcat(cap_ip_buf,",");
 		memcpy(sip_capip,mdi->sip_opt[SIP_CAPIP_OPT_INDEX]->opt_value,mdi->sip_opt[SIP_CAPIP_OPT_INDEX]->opt_len);
 		strcat(cap_ip_buf,sip_capip);
 	}
@@ -843,6 +854,7 @@ int sip_send_full_log(media_t* mdi)
 	char sip_capip[128]={0};
 	if(NULL!=mdi->sip_opt[SIP_CAPIP_OPT_INDEX])
 	{
+		strcat(cap_ip_buf,",");
 		memcpy(sip_capip,mdi->sip_opt[SIP_CAPIP_OPT_INDEX]->opt_value,mdi->sip_opt[SIP_CAPIP_OPT_INDEX]->opt_len);
 		strcat(cap_ip_buf,sip_capip);
 	}
@@ -925,7 +937,7 @@ void send_voip_full_json_log(media_t* mdi)
 
 	memset(pbuf, 0, sizeof(pbuf));
 	snprintf(pbuf, sizeof(pbuf), "%" PRIu64 "", mdi->lastpkt_time - mdi->create_time);
-	cJSON_AddStringToObject(root, "duation", pbuf);
+	cJSON_AddStringToObject(root, "duration", pbuf);
 		
 	char      	src_ip[32] = {0};
 	char      	src_port[8] = {0};
@@ -987,43 +999,43 @@ void send_voip_full_json_log(media_t* mdi)
 	
 	if(NULL!=mdi->sip_opt[SIP_C_CONTACT_OPT_INDEX])
 	{
-		cJSON_AddStringToObject(root, "Contacts", mdi->sip_opt[SIP_C_CONTACT_OPT_INDEX]->opt_value);	
+		cJSON_AddStringToObject(root, "contacts", mdi->sip_opt[SIP_C_CONTACT_OPT_INDEX]->opt_value);	
 	}
 	else if(NULL!=mdi->sip_opt[SIP_S_CONTACT_OPT_INDEX])
 	{
-		cJSON_AddStringToObject(root, "Contacts", mdi->sip_opt[SIP_S_CONTACT_OPT_INDEX]->opt_value);	
+		cJSON_AddStringToObject(root, "contacts", mdi->sip_opt[SIP_S_CONTACT_OPT_INDEX]->opt_value);	
 	}
 	
 	if(NULL!=mdi->sip_opt[SIP_C_VIA_OPT_INDEX])
 	{
-		cJSON_AddStringToObject(root, "Via", mdi->sip_opt[SIP_C_VIA_OPT_INDEX]->opt_value);	
+		cJSON_AddStringToObject(root, "via", mdi->sip_opt[SIP_C_VIA_OPT_INDEX]->opt_value);	
 	}
 	else if(NULL!=mdi->sip_opt[SIP_S_VIA_OPT_INDEX])
 	{
-		cJSON_AddStringToObject(root, "Via", mdi->sip_opt[SIP_S_VIA_OPT_INDEX]->opt_value);	
+		cJSON_AddStringToObject(root, "via", mdi->sip_opt[SIP_S_VIA_OPT_INDEX]->opt_value);	
 	}
 	
 	if(NULL!=mdi->sip_opt[SIP_C_ROUTE_OPT_INDEX])
 	{
-		cJSON_AddStringToObject(root, "Route", mdi->sip_opt[SIP_C_ROUTE_OPT_INDEX]->opt_value);	
+		cJSON_AddStringToObject(root, "route", mdi->sip_opt[SIP_C_ROUTE_OPT_INDEX]->opt_value);	
 	}
 	else if(NULL!=mdi->sip_opt[SIP_S_ROUTE_OPT_INDEX])
 	{
-		cJSON_AddStringToObject(root, "Route", mdi->sip_opt[SIP_S_ROUTE_OPT_INDEX]->opt_value);	
+		cJSON_AddStringToObject(root, "route", mdi->sip_opt[SIP_S_ROUTE_OPT_INDEX]->opt_value);	
 	}
 
 	if(NULL!=mdi->sip_opt[SIP_C_RECORD_ROUTES_OPT_INDEX])
 	{
-		cJSON_AddStringToObject(root, "Record_route", mdi->sip_opt[SIP_C_RECORD_ROUTES_OPT_INDEX]->opt_value);	
+		cJSON_AddStringToObject(root, "record_route", mdi->sip_opt[SIP_C_RECORD_ROUTES_OPT_INDEX]->opt_value);	
 	}
 	else if(NULL!=mdi->sip_opt[SIP_S_RECORD_ROUTES_OPT_INDEX])
 	{
-		cJSON_AddStringToObject(root, "Record_route", mdi->sip_opt[SIP_S_RECORD_ROUTES_OPT_INDEX]->opt_value);	
+		cJSON_AddStringToObject(root, "record_route", mdi->sip_opt[SIP_S_RECORD_ROUTES_OPT_INDEX]->opt_value);	
 	}
 	
 	if((NULL != mdi->sip_opt[SIP_USERAGENT_OPT_INDEX])&&(mdi->sip_opt[SIP_USERAGENT_OPT_INDEX]->opt_len > 0)&&(NULL != mdi->sip_opt[SIP_USERAGENT_OPT_INDEX]->opt_value))
 	{
-		cJSON_AddStringToObject(root, "User_agent", mdi->sip_opt[SIP_USERAGENT_OPT_INDEX]->opt_value);	
+		cJSON_AddStringToObject(root, "user_agent", mdi->sip_opt[SIP_USERAGENT_OPT_INDEX]->opt_value);	
 	}
 	
 	char* survey = NULL;
@@ -1118,17 +1130,17 @@ int redis_sip_index_3_query(char* index_key, frag_unit_t*  frg_unit, int thread_
 	char 			command[REDIS_CMMD_MAXLEN] = {0};	
 	char*			p_cmmd = command;	
 	int 			cmmd_len = 0;
-	size_t			cmmd_argvlen[SIP_REDIS_CMMD_NUM] = {0};
+	size_t			cmmd_argvlen[SIP_OPT_NUM] = {0};
 	redisReply*		reply = NULL;
 
 	g_sip_cmmd_argv[1] = index_key;
-	for(int i=0;i<SIP_REDIS_CMMD_NUM;i++)
+	for(int i=0;i<SIP_OPT_NUM;i++)
 	{
 		cmmd_argvlen[i] = strlen(g_sip_cmmd_argv[i]);
 	}	
 
 	/*just for record log*/
-	for(int i=0;i<SIP_REDIS_CMMD_NUM;i++)
+	for(int i=0;i<SIP_OPT_NUM;i++)
 	{		
 		snprintf(p_cmmd, REDIS_CMMD_MAXLEN-cmmd_len, "%s ", g_sip_cmmd_argv[i]);		
 		cmmd_len = strlen(g_sip_cmmd_argv[i])+1;
@@ -1137,7 +1149,7 @@ int redis_sip_index_3_query(char* index_key, frag_unit_t*  frg_unit, int thread_
 	MESA_handle_runtime_log(frag_rssb.logger, RLOG_LV_INFO, FRAG_REASSEMBLY_MODULE_NAME,
                                                                 "{%s:%d} [before  %d redis cluster exec command %" PRIu64 "='%s' succ].",
                                                                 __FILE__,__LINE__, thread_seq, frg_unit->pid,command);	
-	rec = redis_excute_command(thread_seq, frag_rssb.logger, &reply, command ,SIP_REDIS_CMMD_NUM, g_sip_cmmd_argv, cmmd_argvlen);
+	rec = redis_excute_command(thread_seq, frag_rssb.logger, &reply, command ,SIP_OPT_NUM, g_sip_cmmd_argv, cmmd_argvlen);
 	MESA_handle_runtime_log(frag_rssb.logger, RLOG_LV_INFO, FRAG_REASSEMBLY_MODULE_NAME,
                                                                 "{%s:%d} [after %d redis cluster exec command %" PRIu64 "='%s' succ].",
                                                                 __FILE__,__LINE__, thread_seq, frg_unit->pid,command);
@@ -1168,11 +1180,11 @@ int redis_sip_index_3_query(char* index_key, frag_unit_t*  frg_unit, int thread_
 				}				
 				else
 				{	
-					frg_unit->sip_opt[i] = (opt_in_t*)malloc(sizeof(opt_in_t));
-					frg_unit->sip_opt[i]->opt_len = reply->element[i]->len;  
-					frg_unit->sip_opt[i]->opt_value = (char*)malloc(reply->element[i]->len);
-					frg_unit->sip_opt[i]->opt_type = g_sip_opt_type[i].opt_type;
-					memcpy(frg_unit->sip_opt[i]->opt_value, reply->element[i]->str, reply->element[i]->len);			
+					frg_unit->sip_opt[i+2] = (opt_in_t*)malloc(sizeof(opt_in_t));
+					frg_unit->sip_opt[i+2]->opt_len = reply->element[i]->len;  
+					frg_unit->sip_opt[i+2]->opt_value = (char*)malloc(reply->element[i]->len);
+					frg_unit->sip_opt[i+2]->opt_type = g_sip_opt_type[i+2].opt_type;
+					memcpy(frg_unit->sip_opt[i+2]->opt_value, reply->element[i]->str, reply->element[i]->len);			
 				}
 			}										
 		}		

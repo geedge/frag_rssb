@@ -486,6 +486,7 @@ void proc_media_multisrc(media_t* mdi, int timeout)
 						   context,
 						   soqav_query_free_timeout,
 						   &mdi->timer_idx);
+			g_frag_run.multisrc_timer_on[mdi->thread_seq] = 1;
 			if(NULL!=mdi->opt[MEDIA_OPT_URL][mdi->url_opt_index])
 			{
 				query_detail->url = (char*)malloc(mdi->opt[MEDIA_OPT_URL][mdi->url_opt_index]->opt_len);
