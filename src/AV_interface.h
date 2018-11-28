@@ -183,7 +183,7 @@ typedef struct msg_log_s
     uint8_t						protocol;			//  translation protocol num; 
     uint8_t						service;			//	service type;
     uint8_t						level;				//	result level;
-    uint8_t  					fd_type;				// 封堵类型, 0表示动态黑白名单，1表示静态配置命中，2表示二级分析节点命中。
+    uint8_t  					fd_type;			
 }msg_log_t;
 
 typedef enum
