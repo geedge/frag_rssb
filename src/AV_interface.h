@@ -1,7 +1,7 @@
 #ifndef _AV_INTERFACE_H
 #define _AV_INTERFACE_H
 
-#define	K_PROJECT						1  //是否是K项目，主要是建议的接口不一致
+#define	K_PROJECT						0  //是否是K项目，主要是建议的接口不一致
 
 #define PROTO_VERSION  					3
 #define PROTO_MAGICNUM 					0x5641
@@ -67,7 +67,7 @@
 #define	SYNC_ACTION_STOP_TO_MAINSYSTEM	0x02
 #define	SYNC_ACTION_ELIMINATE_PROGRAM	0x03
 
-/*封堵建议碎片化管控特征选项*/
+/*FD建议碎片化GK特征选项*/
 #define OPT_FRAG_ORIGIN_URL				0x11
 #define OPT_FRAG_CTRL_SUBSTR			0x12
 #define OPT_FRAG_INDEX_URL				0x13
@@ -77,7 +77,7 @@
 #define	SURVEY_PIC_MONITOR_TYPE			0xB1
 #define	SURVEY_PIC_KEYWORD_TYPE			0xB2
 
-// FD类型, 0表示动态黑白名单，1表示静态配置命中，2表示二级分析节点命中。
+// FD类型, 0表示blacklist，1表示static configures，2表示content hit。
 #define	FD_TYPE_DYNAMIC_LIST			0
 #define	FD_TYPE_STATIC_CONF				1
 #define	FD_TYPE_ANALYSE					2
@@ -86,7 +86,7 @@
 /*=================================monitor service===============================================*/
 
 #define	SERVICE_AUDIO_LANG				0x97	//声学所产生的语种识别建议
-#define	SERVICE_AUDIO_LANG_FULL			0x98	//粗拼装根据上述建议产生的全文件监测日志
+#define	SERVICE_AUDIO_LANG_FULL			0x98	//粗拼装根据上述建议产生的全文件JC日志
 
 /*=================================ack msg===============================================*/
 typedef struct msg_data_ack_s 

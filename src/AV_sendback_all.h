@@ -112,12 +112,12 @@
 #define SERVICE_FLAG_FD 			0		// FenDu Flag
 #define SERVICE_FLAG_JC 			1		// JianCe Flag
 // Defination of service type ;
-#define SERVICE_IPPORT_WHITE    	0x01	//IP+PORT白名单
-#define SERVICE_IPPORT_BLACK    	0x02	//IP+PORT黑名单
-#define SERVICE_URL_WHITE     		0x03	//节目地址白名单
-#define SERVICE_URL_BLACK     		0x04	//节目地址黑名单
-#define SERVICE_HOST_WHITE    		0x05	//节目地址黑名单
-#define SERVICE_HOST_BLACK     		0x06	//节目地址黑名单
+#define SERVICE_IPPORT_WHITE    	0x01	//IP+PORT whitelist
+#define SERVICE_IPPORT_BLACK    	0x02	//IP+PORT blacklist
+#define SERVICE_URL_WHITE     		0x03	//节目地址blacklist
+#define SERVICE_URL_BLACK     		0x04	//节目地址blacklist
+#define SERVICE_HOST_WHITE    		0x05	//节目地址blacklist
+#define SERVICE_HOST_BLACK     		0x06	//节目地址blacklist
 //add by lqy 20120427
 #define SERVICE_FAKE_SERVERIP     	0x07	//虚假服务器节点
 
@@ -156,18 +156,18 @@
 
 
 //
-#define SERVICE_EMULE_SERVER       	0x71	//节目唯一ID白名单
-#define SERVICE_EMULE_KEYS       	0x72	//节目唯一ID黑名单
-#define SERVICE_EMULE_FHID    		0x73	//emule的hashkey黑名单
-#define SERVICE_EMULE_FNAME   		0x74	//emule的hashkey黑名单
-#define SERVICE_EMULE_NODE     		0x75	//emule的hashkey黑名单
+#define SERVICE_EMULE_SERVER       	0x71	//节目唯一ID whitelist
+#define SERVICE_EMULE_KEYS       	0x72	//节目唯一ID blacklist
+#define SERVICE_EMULE_FHID    		0x73	//emule的hashkey blacklist
+#define SERVICE_EMULE_FNAME   		0x74	//emule的hashkey blacklist
+#define SERVICE_EMULE_NODE     		0x75	//emule的hashkey blacklist
 
-#define SERVICE_IPPORT_WHITE_JC    	0x81	//IP+PORT白名单
-#define SERVICE_IPPORT_BLACK_JC    	0x82	//IP+PORT黑名单
-#define SERVICE_URL_WHITE_JC    	0x83	//IP+PORT白名单
-#define SERVICE_URL_BLACK_JC    	0x84	//IP+PORT黑名单
-#define SERVICE_HOST_WHITE_JC    	0x85	//IP+PORT黑名单
-#define SERVICE_HOST_BLACK_JC    	0x86	//IP+PORT黑名单
+#define SERVICE_IPPORT_WHITE_JC    	0x81	//IP+PORT whitelist
+#define SERVICE_IPPORT_BLACK_JC    	0x82	//IP+PORT blacklist
+#define SERVICE_URL_WHITE_JC    	0x83	//IP+PORT whitelist
+#define SERVICE_URL_BLACK_JC    	0x84	//IP+PORT blacklist
+#define SERVICE_HOST_WHITE_JC    	0x85	//IP+PORT blacklist
+#define SERVICE_HOST_BLACK_JC    	0x86	//IP+PORT blacklist
 #define SERVICE_LOAD_ACTION_JC   	0x87	/* liuxueli */
 #define SERVICE_USER_REGION_JC    	0x88	/* liuxueli */
 
