@@ -574,9 +574,9 @@ int read_conf_and_init(const char* filename)
 	}	
 	MESA_load_profile_short_def(filename, "SYSTEM", "BizmanQueueMode", (short*)&g_frag_cfg.bizman_queue_mode, 0);	
 	MESA_load_profile_uint_def(filename, "SYSTEM", "BizmanQueueMaxnum", &g_frag_cfg.bizman_queue_maxnum, 2000000);	
-	MESA_load_profile_short_def(filename, "SYSTEM", "AckSwitch", (short*)&g_frag_cfg.ack_switch, 1);	
+	MESA_load_profile_short_def(filename, "SYSTEM", "AckSwitch", (short*)&g_frag_cfg.ack_switch, 0);	
 	MESA_load_profile_short_def(filename, "SYSTEM", "IVISwitch", (short*)&g_frag_cfg.IVI_switch, 1);	
-	MESA_load_profile_short_def(filename, "SYSTEM", "AsmisSwitch", (short*)&g_frag_cfg.asmis_switch, 1);	
+	MESA_load_profile_short_def(filename, "SYSTEM", "AsmisSwitch", (short*)&g_frag_cfg.asmis_switch, 0);	
 
 	MESA_load_profile_short_def(filename, "SYSTEM", "IndexQueryTime", (short*)&g_frag_cfg.index_query_timeout, 10);
 	MESA_load_profile_short_def(filename, "SYSTEM", "IndexQueryTimerCbMaxNum", (short*)&g_frag_cfg.index_query_timer_cb_maxtime, 500);
@@ -591,7 +591,7 @@ int read_conf_and_init(const char* filename)
 	MESA_load_profile_short_def(filename, "SYSTEM", "RenewTimeStep", (short*)&g_frag_cfg.renew_time_step,0);	
 		
 	/*av record*/
-	MESA_load_profile_short_def(filename, "SYSTEM", "AVRecordFileSwitch", (short*)&g_frag_cfg.avrecord_switch,1);	
+	MESA_load_profile_short_def(filename, "SYSTEM", "AVRecordFileSwitch", (short*)&g_frag_cfg.avrecord_switch,0);	
 	MESA_load_profile_string_def(filename, "SYSTEM", "AVRecordFileRootDir", g_frag_cfg.avrecord_filepath, sizeof(g_frag_cfg.avrecord_filepath),"./AVrecord/");	
 	MESA_load_profile_uint_def(filename, "SYSTEM", "AVRecordFileMaxNum", &g_frag_cfg.avrecord_maxnum,100000);	
 	mkdir_r(g_frag_cfg.avrecord_filepath);
@@ -642,7 +642,7 @@ int read_conf_and_init(const char* filename)
 	/*monitor hash param*/	
 	MESA_load_profile_uint_def(filename, "SYSTEM", "MonitorHashSize", &hash_size, 1024*1024);
 	MESA_load_profile_uint_def(filename, "SYSTEM", "MonitorHashElemNum", &hash_max_elem_num, 1024*1024*16);
-	MESA_load_profile_uint_def(filename, "SYSTEM", "MonitorHahsExpireTime", &hash_expire_time, 60*60*12);
+	MESA_load_profile_uint_def(filename, "SYSTEM", "MonitorHahsExpireTime", &hash_expire_time, 60*2);
 	memset(&hash_args,0,sizeof(MESA_htable_create_args_t));
 	hash_args.thread_safe = 1;  //group lock
 	hash_args.recursive = 1;
