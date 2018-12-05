@@ -1076,10 +1076,15 @@ int   main(int argc, char **argv)
 	wired_cfg_init(main_conf_handle);	
 	rssb_conf_handle=wired_cfg_create("VOIP_RSSB_CONF", "./conf/frag_reassembly.conf");
 	wired_cfg_init(rssb_conf_handle);
-#else
-	main_conf_handle=wired_cfg_create("RSSB_MAIN_CONF", "./conf/main.conf");
+#elif PIC_FUNC
+	main_conf_handle=wired_cfg_create("PIC_RSSB_MAIN_CONF", "./conf/main.conf");
 	wired_cfg_init(main_conf_handle);	
-	rssb_conf_handle=wired_cfg_create("RSSB_CONF", "./conf/frag_reassembly.conf");
+	rssb_conf_handle=wired_cfg_create("PIC_RSSB_REASSEMBLY_CONF", "./conf/frag_reassembly.conf");
+	wired_cfg_init(rssb_conf_handle);
+#else
+	main_conf_handle=wired_cfg_create("AV_RSSB_MAIN_CONF", "./conf/main.conf");
+	wired_cfg_init(main_conf_handle);	
+	rssb_conf_handle=wired_cfg_create("AV_RSSB_REASSEMBLY_CONF", "./conf/frag_reassembly.conf");
 	wired_cfg_init(rssb_conf_handle);
 #endif
 		

@@ -4,10 +4,6 @@
 #include <sys/un.h>
 #include </usr/include/stdint.h>
 
-#define	APP_FUNC														0  //手机APP
-#define	VOIP_FUNC														1  //VOIP 主要是配置文件不一致
-#define	PIC_FUNC														0  //PIC 主要是配置文件不一致
-
 #include "MESA_list_queue.h"
 #include "MESA_htable.h"
 #include "MESA_trace.h"

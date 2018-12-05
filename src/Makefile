@@ -7,9 +7,19 @@ PAPP_PATH=/home/mesasoft/frag_rssb/
 #CFLAGS          =  -g3 -Wall -fPIC -O
 INCLUDES        = -I./inc/
 INCLUDES        += -I/usr/include/MESA/
-INCLUDES        += -I./support/hiredis-vip-master/
+INCLUDES        += -I./support/hiredisv4/
 CFLAGS          =  -g3 -Wall -fPIC -D__STDC_FORMAT_MACROS
 CFLAGS	       	+= $(INCLUDES)
+
+ifeq ($(MODE), PIC)
+CFLAGS += -DPIC_FUNC=1
+TARGET	= pic_rssb_maskey
+else ifeq ($(MODE), VOIP)
+CFLAGS += -DPIC_FUNC=1
+TARGET	= voip_rssb_maskey
+else
+TARGET	= av_rssb_maskey
+endif
 #LDDICTATOR      = -Wl,-wrap,malloc -Wl,-wrap,calloc -Wl,-wrap,free -Wl,-wrap,realloc
 LDDICTATOR      =
 CC              = g++
@@ -33,9 +43,6 @@ SOURCESCPP  = $(wildcard *.cpp)
 OBJECTS 	= $(SOURCES:.c=.o)
 OBJECTSCPP  = $(SOURCESCPP:.cpp=.o)
 #DEPS		= $(SOURCES:.c=.d)
-
-
-TARGET		= rssb_maskey
 
 .PHONY:clean all 
 

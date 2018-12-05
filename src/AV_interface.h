@@ -1,7 +1,7 @@
 #ifndef _AV_INTERFACE_H
 #define _AV_INTERFACE_H
 
-#define	K_PROJECT						0  //是否是K项目，主要是建议的接口不一致
+#define	K_PROJECT						1  //是否是K项目，主要是建议的接口不一致
 
 #define PROTO_VERSION  					3
 #define PROTO_MAGICNUM 					0x5641
