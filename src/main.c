@@ -523,6 +523,7 @@ int read_conf_and_init(const char* filename)
 	uint32_t					hash_max_elem_num = 0;
 	uint32_t					hash_expire_time = 0;	
 	char						table_info_filename [MAX_PATH_LEN]={0};	
+	int 						rec_dest = 0;
 	
 	/*main log*/
 	memset(conf_buf,0,sizeof(conf_buf));
@@ -770,28 +771,34 @@ int read_conf_and_init(const char* filename)
 
 	/*unix socket : backward data send*/	
 	memset(conf_buf,0,sizeof(conf_buf));
-	MESA_load_profile_string_def(filename, "NETWORK", "UnixSocketSendSrcAddr", conf_buf, sizeof(conf_buf),"/home/mesasoft/frag_rssb/un_sender");
-	for(i=0;i<g_frag_cfg.thread_num;i++)
+	rec_dest = MESA_load_profile_string_def(filename, "NETWORK", "UnixSocketSendSrcAddr", conf_buf, sizeof(conf_buf),"/home/mesasoft/frag_rssb/un_sender");
+	if(-1!=rec_dest)
 	{
-		memset(buf,0,sizeof(buf));
-		snprintf(buf,sizeof(buf),"%s_%02d",conf_buf,i);
-		g_frag_run.send_fd[i] = init_unix_socket(buf);
-		if(-1==g_frag_run.send_fd[i])
+		for(i=0;i<g_frag_cfg.thread_num;i++)
 		{
-			printf("[%s] init_unix_socket error.\n", FRAG_REASSEMBLY_MODULE_NAME);
-			MESA_handle_runtime_log(g_frag_run.logger,RLOG_LV_FATAL,FRAG_REASSEMBLY_MODULE_NAME,
-								(char*)"[%s:%d] init_unix_socket error." , __FILE__,__LINE__);
-			return -1;
+			memset(buf,0,sizeof(buf));
+			snprintf(buf,sizeof(buf),"%s_%02d",conf_buf,i);
+			g_frag_run.send_fd[i] = init_unix_socket(buf);
+			if(-1==g_frag_run.send_fd[i])
+			{
+				printf("[%s] init_unix_socket error.\n", FRAG_REASSEMBLY_MODULE_NAME);
+				MESA_handle_runtime_log(g_frag_run.logger,RLOG_LV_FATAL,FRAG_REASSEMBLY_MODULE_NAME,
+									(char*)"[%s:%d] init_unix_socket error." , __FILE__,__LINE__);
+				return -1;
+			}
 		}
 	}
 	memset(conf_buf,0,sizeof(conf_buf));
 	memset(split_buf,0,sizeof(split_buf));
-	MESA_load_profile_string_def(filename, "NETWORK", "UnixSocketSendDestAddr", conf_buf, sizeof(conf_buf),"");
-	g_frag_cfg.send_dest_addr_num = string_split(conf_buf, split_buf, DEST_MAXNUM, ';');	
-	for(i=0;i<(uint32_t)g_frag_cfg.send_dest_addr_num;i++)
+	rec_dest = MESA_load_profile_string_def(filename, "NETWORK", "UnixSocketSendDestAddr", conf_buf, sizeof(conf_buf),"");
+	if(-1!=rec_dest)
 	{
-		strcpy(g_frag_cfg.send_dest_addr[i].sun_path,split_buf[i]);
-		g_frag_cfg.send_dest_addr[i].sun_family = AF_UNIX;
+		g_frag_cfg.send_dest_addr_num = string_split(conf_buf, split_buf, DEST_MAXNUM, ';');	
+		for(i=0;i<(uint32_t)g_frag_cfg.send_dest_addr_num;i++)
+		{
+			strcpy(g_frag_cfg.send_dest_addr[i].sun_path,split_buf[i]);
+			g_frag_cfg.send_dest_addr[i].sun_family = AF_UNIX;
+		}
 	}
 	
 	/*----USM send read conf and init----*/
@@ -839,14 +846,17 @@ int read_conf_and_init(const char* filename)
 	
 	/*unix socket : response msg recv*/		
 	memset(conf_buf,0,sizeof(conf_buf));
-	MESA_load_profile_string_def(filename, "NETWORK", "UnixSocketRecvAddr", conf_buf, sizeof(conf_buf),"/home/mesasoft/frag_rssb/un_recv");
-	g_frag_run.recv_msg_fd = init_recv_unix_socket(conf_buf);
-	if(-1==g_frag_run.recv_msg_fd)
+	rec_dest = MESA_load_profile_string_def(filename, "NETWORK", "UnixSocketRecvAddr", conf_buf, sizeof(conf_buf),"/home/mesasoft/frag_rssb/un_recv");
+	if(-1!=rec_dest)
 	{
-		printf("[%s] init_recv_unix_socket error.\n", FRAG_REASSEMBLY_MODULE_NAME);
-		MESA_handle_runtime_log(g_frag_run.logger,RLOG_LV_FATAL,FRAG_REASSEMBLY_MODULE_NAME,
-								(char*)"[%s:%d] init_recv_unix_socket." , __FILE__,__LINE__);
-		return -1;
+		g_frag_run.recv_msg_fd = init_recv_unix_socket(conf_buf);
+		if(-1==g_frag_run.recv_msg_fd)
+		{
+			printf("[%s] init_recv_unix_socket error.\n", FRAG_REASSEMBLY_MODULE_NAME);
+			MESA_handle_runtime_log(g_frag_run.logger,RLOG_LV_FATAL,FRAG_REASSEMBLY_MODULE_NAME,
+									(char*)"[%s:%d] init_recv_unix_socket." , __FILE__,__LINE__);
+			return -1;
+		}
 	}
 
 	/*msg port:粗拼装接收建议的端口，前端接收建议的端口*/
