@@ -136,13 +136,12 @@ void input_udp_clear(int sockfd)
     close(sockfd);
 }
 
-int init_unix_socket(const char* file_name)
+int init_unix_socket(const char* file_name, int timeout_us, int bufsize)
 {
 	int sockfd = -1;
 	int len = 0;
 	struct sockaddr_un un;
 	struct timeval send_timeout;
-	int send_buf_size = 1024*1024*4;
 	
 	if(strlen(file_name)+8>sizeof(un.sun_path))
 	{
@@ -157,7 +156,7 @@ int init_unix_socket(const char* file_name)
 	}
 	
 	send_timeout.tv_sec = 0;
-	send_timeout.tv_usec = 100000;
+	send_timeout.tv_usec = timeout_us;
 	memset(&un,0,sizeof(un));
 	un.sun_family = AF_UNIX;
 	if(-1==setsockopt(sockfd,SOL_SOCKET,SO_SNDTIMEO,&send_timeout,sizeof(send_timeout)))
@@ -165,7 +164,7 @@ int init_unix_socket(const char* file_name)
 		printf("Set Unix-domain socket error:%s\n",strerror(errno));
 		return -1;
 	}
-	if(-1==setsockopt(sockfd,SOL_SOCKET,SO_SNDBUF,&send_buf_size,sizeof(send_buf_size)))
+	if(-1==setsockopt(sockfd,SOL_SOCKET,SO_SNDBUF,&bufsize,sizeof(bufsize)))
 	{
 		printf("Set Unix-domain socket error:%s\n",strerror(errno));
 		return -1;

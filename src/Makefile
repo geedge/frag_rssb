@@ -52,7 +52,7 @@ $(TARGET):$(OBJECTS) $(OBJECTSCPP)  $(LIB_FILE)
 	#$(CCC) -shared $(CFLAGS) $(OBJECTS) $(LIB) -o $@
 	$(CCC) $(CFLAGS) $(OBJECTS) $(OBJECTSCPP)  $(LIB) $(LDDICTATOR) -o $@
 	cp $(TARGET) ../bin/
-	cp $(TARGET) /home/mesasoft/frag_rssb/
+#	cp $(TARGET) /home/mesasoft/frag_rssb/
 	
 .c.o:
 #%.d:%.c

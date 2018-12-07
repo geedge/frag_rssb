@@ -42,9 +42,9 @@ const char* frag_rssb_version = "2018-08-13T09:00:00";
 const char* frag_rssb_version_time = "2018-08-13T09:00:00";
 const char* frag_rssb_version_des = "MESA@iie rssb_maskey";
 
-int FRAG_RSSB_VERSION_1_0_20181107 = 0;
-const char* frag_rssb_version_time_in = "2018-11-07";
-const char* frag_rssb_version_des_in = "alter json_log opt name for k";
+int FRAG_RSSB_VERSION_1_0_20181207 = 0;
+const char* frag_rssb_version_time_in = "2018-12-07";
+const char* frag_rssb_version_des_in = "unixsocket";
 void frag_rssb_history()
 {
 	//2015.11.15  v1.0  create the project	
@@ -223,6 +223,7 @@ void frag_rssb_history()
    //2018.11.02	   v4.0//add timer_on
    //2018.11.05	   v4.0//alter voip save_media frg_len>headerlen
    //2018.11.07    v4.0//alter json_log opt name for k
+   //2018.12.07	   v4.0//unixsocket set bufsize timeout in configure
 }
 
 frag_rssb_parameter_t 		g_frag_run;
@@ -771,14 +772,19 @@ int read_conf_and_init(const char* filename)
 
 	/*unix socket : backward data send*/	
 	memset(conf_buf,0,sizeof(conf_buf));
+	int bufsize = 0;
+	int timeout_us = 0;
+	MESA_load_profile_int_def(filename, "NETWORK", "UnixSocketSendBufSize", &bufsize, 4);
+	bufsize *= 1024*1024;
+	MESA_load_profile_int_def(filename, "NETWORK", "UnixSocketSendTimeout", &timeout_us, 1000);	
 	rec_dest = MESA_load_profile_string_def(filename, "NETWORK", "UnixSocketSendSrcAddr", conf_buf, sizeof(conf_buf),"/home/mesasoft/frag_rssb/un_sender");
 	if(-1!=rec_dest)
-	{
+	{		
 		for(i=0;i<g_frag_cfg.thread_num;i++)
 		{
 			memset(buf,0,sizeof(buf));
 			snprintf(buf,sizeof(buf),"%s_%02d",conf_buf,i);
-			g_frag_run.send_fd[i] = init_unix_socket(buf);
+			g_frag_run.send_fd[i] = init_unix_socket(buf,timeout_us,bufsize);
 			if(-1==g_frag_run.send_fd[i])
 			{
 				printf("[%s] init_unix_socket error.\n", FRAG_REASSEMBLY_MODULE_NAME);
@@ -789,8 +795,8 @@ int read_conf_and_init(const char* filename)
 		}
 	}
 	memset(conf_buf,0,sizeof(conf_buf));
-	memset(split_buf,0,sizeof(split_buf));
-	rec_dest = MESA_load_profile_string_def(filename, "NETWORK", "UnixSocketSendDestAddr", conf_buf, sizeof(conf_buf),"");
+	memset(split_buf,0,sizeof(split_buf));	
+	rec_dest = MESA_load_profile_string_def(filename, "NETWORK", "UnixSocketSendDestAddr", conf_buf, sizeof(conf_buf),"");	
 	if(-1!=rec_dest)
 	{
 		g_frag_cfg.send_dest_addr_num = string_split(conf_buf, split_buf, DEST_MAXNUM, ';');	

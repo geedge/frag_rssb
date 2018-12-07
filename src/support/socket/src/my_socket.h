@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-int init_unix_socket(const char* file_name);
+int init_unix_socket(const char* file_name, int timeout_us, int bufsize);
 int unix_socket_send(int sockfd, struct sockaddr_un *dest_un, const char*data, int datalen);
 int init_recv_udp_socket(uint16_t port);
 int recv_udp_socket_recv(int sockfd, uint32_t *src_ip, uint8_t *buf, uint32_t buf_size);
