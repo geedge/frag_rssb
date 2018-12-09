@@ -1079,7 +1079,9 @@ int   main(int argc, char **argv)
 	uint32_t 	i=0;	
 	void		*main_conf_handle=NULL, *rssb_conf_handle=NULL;
 
-	memset(&g_frag_run, 0, sizeof(frag_rssb_parameter_t));	
+	memset(&g_frag_run, 0, sizeof(frag_rssb_parameter_t));
+	g_frag_run.recv_msg_fd=-1;
+	g_frag_run.recv_msg_sd=-1;
 	memset(&g_frag_cfg, 0, sizeof(frag_rssb_configure_t));
 	memset(&g_frag_stat, 0, sizeof(frag_rssb_status_t));
 
