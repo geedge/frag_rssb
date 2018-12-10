@@ -30,8 +30,8 @@ MODE表示业务，可以取值为PIC,VOIP,默认为AV
 
 - 数据接收端口 BizmanPort=22072
 - 发送响应给前端 BizmanAckPort=22084
-- 数据发送端口 UdpSendPort=33072
-- 建议接收端口 CPZMsgPort=22070
+- 数据发送端口 UdpSendPort=33092
+- 建议接收端口 CPZMsgPort=22090
 - 建议发送端口 QDMsgPort=22080
 
 ### VOIP
@@ -39,7 +39,7 @@ MODE表示业务，可以取值为PIC,VOIP,默认为AV
 - 数据接收端口 BizmanPort=22092
 - 发送响应给前端 BizmanAckPort=22084
 - 数据发送端口 UdpSendPort=33092
-- 建议接收端口 CPZMsgPort=22090
+- 建议接收端口 CPZMsgPort=22080
 - 建议发送端口 QDMsgPort=22080
 
 ### 摘要
