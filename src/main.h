@@ -153,7 +153,7 @@ typedef struct frag_rssb_configure_s
 	
 	uint16_t					bizman_port;				//recv_bizman port, recv frag from sapp
 	uint16_t					bizman_ack_port;			//answer_sapp_bizman port, send msg to sapp 	
-	uint16_t					msg_port;		
+	uint16_t					cpz_msg_port;		
 	uint16_t					store_filepath_switch;
 
 	uint16_t 					renew_time_min;
@@ -231,7 +231,8 @@ typedef struct frag_rssb_configure_s
 	WLB_handle_t 				rssb_wlb_handle;
 	uint16_t					wlb_on;
 	uint16_t					health_check_interval;
-	uint16_t					data_port;
+	uint16_t					data_port;	
+	uint16_t					qd_msg_port;		
 	uint32_t					capacity;
 	uint32_t					cost;
 	uint32_t					wlb_report_interval;

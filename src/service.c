@@ -485,7 +485,7 @@ void audio_lang_monitor_service(uint32_t src_ip, media_t* mdi)
 		bizman_send(g_frag_run.answer_sapp_bizman, 
 					mdi->thread_seq,
 					src_ip , 
-					g_frag_cfg.msg_port, 
+					g_frag_cfg.qd_msg_port, 
 					monitor_buf, 
 					monitor_len,
 					1,BIZMAN_RELIABLE_SEND|BIZMAN_SMOOTH_DEST|BIZMAN_PUSH_SEND);
@@ -512,7 +512,7 @@ void config_monitor_service(uint32_t src_ip, media_t* mdi)
 	bizman_send(g_frag_run.answer_sapp_bizman, 
 				mdi->thread_seq,
 				src_ip, 
-				g_frag_cfg.msg_port, 
+				g_frag_cfg.qd_msg_port, 
 				monitor_buf, 
 				monitor_len,
 				1,BIZMAN_RELIABLE_SEND|BIZMAN_SMOOTH_DEST|BIZMAN_PUSH_SEND);	

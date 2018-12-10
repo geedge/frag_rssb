@@ -11,15 +11,25 @@ INCLUDES        += -I./support/hiredisv4/
 CFLAGS          =  -g3 -Wall -fPIC -D__STDC_FORMAT_MACROS
 CFLAGS	       	+= $(INCLUDES)
 
+
+ifeq ($(PROJECT), K)
+CFLAGS += -DK_PROJECT=1
+else ifeq ($(PROJECT), Z)
+CFLAGS += -DK_PROJECT=0
+else
+CFLAGS += -DK_PROJECT=0
+endif
+
 ifeq ($(MODE), PIC)
 CFLAGS += -DPIC_FUNC=1
 TARGET	= pic_rssb_maskey
 else ifeq ($(MODE), VOIP)
-CFLAGS += -DPIC_FUNC=1
+CFLAGS += -DVOIP_FUNC=1
 TARGET	= voip_rssb_maskey
 else
 TARGET	= av_rssb_maskey
 endif
+
 #LDDICTATOR      = -Wl,-wrap,malloc -Wl,-wrap,calloc -Wl,-wrap,free -Wl,-wrap,realloc
 LDDICTATOR      =
 CC              = g++

@@ -1,1 +1,0 @@
-See maat_stat.cpp in MAAT project for more guidance.

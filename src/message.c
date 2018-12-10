@@ -901,7 +901,7 @@ long resp_checkresult_search_media_cb(void *data, const uint8_t *key, uint size,
 		inet_ntop(AF_INET, &ip, pbuf, buf_len);			
 		resp_write_to_log(RESP_SEND_BLOCK, check_res, pbuf, mdi, mdi->qd_info[i].mid);
 		*(uint64_t*)check_res->prog_id = mdi->qd_info[i].mid;
-		bizman_send(g_frag_run.answer_sapp_bizman, mdi->thread_seq, ip, g_frag_cfg.msg_port, (const char*)buf, buflen, 
+		bizman_send(g_frag_run.answer_sapp_bizman, mdi->thread_seq, ip, g_frag_cfg.qd_msg_port, (const char*)buf, buflen, 
 					1,BIZMAN_RELIABLE_SEND|BIZMAN_SMOOTH_DEST|BIZMAN_PUSH_SEND);		
 		g_frag_stat.stat_info[RESP_CHECKRESULT_BLACKLIST_OUT_BLOCK][TOTAL_PKTS]++; 
 		g_frag_stat.stat_info[RESP_CHECKRESULT_BLACKLIST_OUT_BLOCK][TOTAL_BYTES] += buflen;		
@@ -918,7 +918,7 @@ long resp_checkresult_search_media_cb(void *data, const uint8_t *key, uint size,
 		inet_ntop(AF_INET, &ip, pbuf, buf_len);			
 		resp_write_to_log(RESP_SEND_BLOCK_MULTI, check_res, pbuf, mdi, mdi->qd_info_from_cpz[i].mid);
 		*(uint64_t*)check_res->prog_id = mdi->qd_info_from_cpz[i].mid;
-		bizman_send(g_frag_run.answer_sapp_bizman, mdi->thread_seq, ip, g_frag_cfg.msg_port, (const char*)buf, buflen, 
+		bizman_send(g_frag_run.answer_sapp_bizman, mdi->thread_seq, ip, g_frag_cfg.qd_msg_port, (const char*)buf, buflen, 
 					1,BIZMAN_RELIABLE_SEND|BIZMAN_SMOOTH_DEST|BIZMAN_PUSH_SEND);		
 		g_frag_stat.stat_info[RESP_CHECKRESULT_BLACKLIST_OUT_BLOCK][TOTAL_PKTS]++; 
 		g_frag_stat.stat_info[RESP_CHECKRESULT_BLACKLIST_OUT_BLOCK][TOTAL_BYTES] += buflen;		
@@ -1081,6 +1081,14 @@ void* recv_response_msg(void *param)
 	{
 		/*recv msg*/
 		FD_ZERO(&rset);
+		if(g_frag_run.recv_msg_fd>=0)
+		{
+			FD_SET(g_frag_run.recv_msg_fd,&rset);
+		}
+		if(g_frag_run.recv_msg_sd>=0)
+		{
+			FD_SET(g_frag_run.recv_msg_sd,&rset);
+		}
 		FD_SET(g_frag_run.recv_msg_fd,&rset);
 		FD_SET(g_frag_run.recv_msg_sd,&rset);
 		if(-1==select(maxfdpl,&rset,NULL,NULL,NULL))

@@ -29,7 +29,7 @@ void heart_beat(unsigned int thread_id,char *buf, uint32_t size, uint32_t src_ip
 {
 	msg_header_t *mh = (msg_header_t*)buf;
 	mh->msg_type = MSG_LIVE_RESPONS;
-	bizman_send(g_frag_run.answer_sapp_bizman, thread_id, src_ip,  g_frag_cfg.msg_port,  (const char*)buf, size, 1, BIZMAN_SMOOTH_DEST|BIZMAN_PUSH_SEND);
+	bizman_send(g_frag_run.answer_sapp_bizman, thread_id, src_ip,  g_frag_cfg.qd_msg_port,  (const char*)buf, size, 1, BIZMAN_SMOOTH_DEST|BIZMAN_PUSH_SEND);
 }
 
 void proc_data_msg(uint32_t thread_id, uint32_t src_ip, char* packet, int size)

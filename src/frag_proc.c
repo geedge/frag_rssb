@@ -1685,7 +1685,7 @@ void send_ack_to_qd(frag_in_t* frg, uint32_t src_ip, int thread_seq)
 		bizman_send(g_frag_run.answer_sapp_bizman, 
 					thread_seq, 
 					src_ip,
-					g_frag_cfg.msg_port,  
+					g_frag_cfg.qd_msg_port,  
 					(const char*)g_frag_run.fb_ack_buf[thread_seq],
 					MSG_HEADER_LEN + sizeof(msg_data_ack_t),
 				    1, BIZMAN_SMOOTH_DEST|BIZMAN_PUSH_SEND);
