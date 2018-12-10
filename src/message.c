@@ -1089,8 +1089,6 @@ void* recv_response_msg(void *param)
 		{
 			FD_SET(g_frag_run.recv_msg_sd,&rset);
 		}
-		FD_SET(g_frag_run.recv_msg_fd,&rset);
-		FD_SET(g_frag_run.recv_msg_sd,&rset);
 		if(-1==select(maxfdpl,&rset,NULL,NULL,NULL))
 		{
 			MESA_handle_runtime_log(g_frag_run.logger, RLOG_LV_FATAL, FRAG_REASSEMBLY_MODULE_NAME, 
