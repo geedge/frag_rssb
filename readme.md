@@ -17,11 +17,11 @@ MODE表示业务，可以取值为PIC,VOIP,默认为AV
 
 ### AV
 
---- 数据接收端口 BizmanPort=22082
---- 发送响应给前端 BizmanAckPort=22084
---- 数据发送端口 UdpSendPort=33082;33083
---- 建议接收端口 CPZMsgPort=22080
---- 建议发送端口 QDMsgPort=22080
+- 数据接收端口 BizmanPort=22082
+- 发送响应给前端 BizmanAckPort=22084
+- 数据发送端口 UdpSendPort=33082;33083
+- 建议接收端口 CPZMsgPort=22080
+- 建议发送端口 QDMsgPort=22080
 
 ### PIC
 
