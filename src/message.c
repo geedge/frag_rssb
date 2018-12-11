@@ -743,7 +743,7 @@ long resp_checkresult_search_media_cb(void *data, const uint8_t *key, uint size,
 		last_black_ts = time(NULL);
 		return -1;
 	}
-
+	
 	/*VOIP的监测建议，由粗拼装发*/
 	if(mdi->proto==AV_PROTOCOL_SIP)
 	{
@@ -753,7 +753,10 @@ long resp_checkresult_search_media_cb(void *data, const uint8_t *key, uint size,
 			mdi->jc_buf = (char*)malloc(buflen);
 			memcpy(mdi->jc_buf, buf, buflen);
 			mdi->jc_buflen = buflen;			
+#if K_PROJECT
+#else
 			return 0;
+#endif
 		}
 		else
 		{
@@ -763,7 +766,7 @@ long resp_checkresult_search_media_cb(void *data, const uint8_t *key, uint size,
 			mdi->fd_buflen = buflen;			
 		}
 	}	
-	
+
 	/*monitor service*/
 	if(check_res->service==SERVICE_AUDIO_LANG)
 	{
@@ -939,7 +942,7 @@ long resp_checkresult_search_media_cb(void *data, const uint8_t *key, uint size,
 		mdi->survey_time = time(NULL);
 		memcpy(mdi->log_url, log_url, MIN(log_urllen, sizeof(mdi->log_url)-1));
 #if K_PROJECT
-		send_json_log(mdi,check_res);
+		//send_json_log(mdi,check_res);
 #else
 		//send_json_log(mdi,check_res);//for test
 

@@ -42,9 +42,9 @@ const char* frag_rssb_version = "2018-08-13T09:00:00";
 const char* frag_rssb_version_time = "2018-08-13T09:00:00";
 const char* frag_rssb_version_des = "MESA@iie rssb_maskey";
 
-int FRAG_RSSB_VERSION_1_0_20181210 = 0;
-const char* frag_rssb_version_time_in = "2018-12-10";
-const char* frag_rssb_version_des_in = "unixsocket recv survey";
+int FRAG_RSSB_VERSION_1_0_20181211 = 0;
+const char* frag_rssb_version_time_in = "2018-12-11";
+const char* frag_rssb_version_des_in = "resp_checkresult_search_media_cb add K_PROJECT";
 void frag_rssb_history()
 {
 	//2015.11.15  v1.0  create the project	
@@ -225,6 +225,7 @@ void frag_rssb_history()
    //2018.11.07    v4.0//alter json_log opt name for k
    //2018.12.07	   v4.0//unixsocket set bufsize timeout in configure
    //2018.12.10	   v4.0//1.recv_msg_fd not unix 2.MsgPort
+   //2018.12.11	   v4.0//resp_checkresult_search_media_cb add K_PROJECT,and delete send_json_log
 }
 
 frag_rssb_parameter_t 		g_frag_run;
