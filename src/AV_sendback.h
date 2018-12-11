@@ -96,6 +96,7 @@
 #define MEDIA_TYPE_AUDIO_G729           0x84
 #define MEDIA_TYPE_AUDIO_VIVOX          0x85
 
+
 /*指导消息体选项类型*/
 /*指导消息体选项类型-VOIP选项类型*/
 #define OPT_SIP_SEND_RATE_INFO 			0x71  /*VOIP编码参数信息*/

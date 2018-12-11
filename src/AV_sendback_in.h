@@ -97,6 +97,18 @@
 #define RTSP_RDT_TYPE				0x92
 #define RTSP_RTP_TYPE				0x91
 
+/*媒体类型:文件摘要*/
+#define FILE_CONTENT					0x03
+#define	FILE_DOC						0xF0
+#define	FILE_DOCX						0xF1
+#define	FILE_XLS						0xF2
+#define	FILE_XLSX						0xF3
+#define	FILE_PPT						0xF4
+#define	FILE_PPTX						0xF5
+#define	FILE_PDF						0xF6
+#define	FILE_EXE						0xF7
+#define	FILE_APK						0xF8
+
 typedef struct msg_map_s 
 {
 	uint8_t  			nodeA; 

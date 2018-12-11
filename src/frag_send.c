@@ -103,8 +103,20 @@ msg_map_t g_av_mediatype_map[AV_MEDAI_TYPE_MAXNUM] =
 	
 	{MMS_TYPE, 				MEDIA_TYPE_MMS},
 	{RTSP_RDT_TYPE, 		MEDIA_TYPE_RTSP_RDT},
-	{RTSP_RTP_TYPE, 		MEDIA_TYPE_RTSP_RTP}	
+	{RTSP_RTP_TYPE, 		MEDIA_TYPE_RTSP_RTP},
+	
+	{FILE_CONTENT, 			FILE_CONTENT},
+	{FILE_DOC, 				FILE_DOC},
+	{FILE_DOCX, 			FILE_DOCX},
+	{FILE_XLS, 				FILE_XLS},
+	{FILE_XLSX, 			FILE_XLSX},	
+	{FILE_PPT, 				FILE_PPT},	
+	{FILE_PPTX, 			FILE_PPTX},	
+	{FILE_PDF, 				FILE_PDF},
+	{FILE_EXE, 				FILE_EXE},
+	{FILE_APK, 				FILE_APK},	
 };
+
 
 /*
 msg_map_t g_av_mediatype_map[AV_MEDAI_TYPE_MAXNUM] = 
