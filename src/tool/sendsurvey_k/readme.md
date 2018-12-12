@@ -1,17 +1,19 @@
-### ËµÃ÷
+### è¯´æ˜
 
--	°´ÕÕKÏîÄ¿µÄ½Ó¿Ú£¬Ê¹ÓÃunixSocket¶ø·ÇUDP½Ó¿Ú·¢ËÍ½¨Òé¸ø´ÖÆ´×°
+-	æŒ‰ç…§Ké¡¹ç›®çš„æ¥å£ï¼Œä½¿ç”¨unixSocketè€ŒéUDPæ¥å£å‘é€å»ºè®®ç»™ç²—æ‹¼è£…
 
-### ´ÖÆ´×°ÅäÖÃÒªÇó
+### ç²—æ‹¼è£…é…ç½®è¦æ±‚
 
-- ./conf/main.confÖĞÔö¼ÓÅäÖÃÏîÄ¿£ºUnixSocketRecvAddr=/home/mesasoft/frag_rssb/un_recv£¬°´ÕÕÊµ¼ÊÔËĞĞ»·¾³ĞŞ¸Ä
+- ./conf/main.confä¸­å¢åŠ é…ç½®é¡¹ç›®ï¼šUnixSocketRecvAddr=/home/mesasoft/frag_rssb/un_recvï¼ŒæŒ‰ç…§å®é™…è¿è¡Œç¯å¢ƒä¿®æ”¹
 
-### Ê¹ÓÃ·½·¨
+### ä½¿ç”¨æ–¹æ³•
 
-³ÌĞòÃû ´ÖÆ´×°½ÓÊÕ½¨ÒéµÄsocket PID service_type configID level logurl
+- ç¨‹åºå ç²—æ‹¼è£…æ¥æ”¶å»ºè®®çš„socket PID service_type configID level logurl
 
-ÀıÈç£º
+ä¾‹å¦‚ï¼š
+
 ./sendsurvey /home/mesasoft/frag_rssb/un_recv 11111111111111 37 212 100 192.168.1.1:/home/lishu/test.txt
 
-logurl¿ÉÒÔ²»Ğ´
+logurlå¯ä»¥ä¸å†™
+
 ./sendsurvey /home/mesasoft/frag_rssb/un_recv 11111111111111111 0 0 0
