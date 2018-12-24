@@ -75,6 +75,8 @@
 #define	SURVEY_PIC_MONITOR_TYPE			0xB1
 #define	SURVEY_PIC_KEYWORD_TYPE			0xB2
 
+#define	SURVER_VOIP_COLLECT_TPYE        0xA4//for K voip_collect
+
 // FD类型, 0表示blacklist，1表示static configures，2表示content hit。
 #define	FD_TYPE_DYNAMIC_LIST			0
 #define	FD_TYPE_STATIC_CONF				1

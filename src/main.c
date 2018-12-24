@@ -42,9 +42,9 @@ const char* frag_rssb_version = "2018-08-13T09:00:00";
 const char* frag_rssb_version_time = "2018-08-13T09:00:00";
 const char* frag_rssb_version_des = "MESA@iie rssb_maskey";
 
-int FRAG_RSSB_VERSION_1_0_20181211 = 0;
-const char* frag_rssb_version_time_in = "2018-12-11";
-const char* frag_rssb_version_des_in = "resp_checkresult_search_media_cb add K_PROJECT";
+int FRAG_RSSB_VERSION_1_0_20181224 = 0;
+const char* frag_rssb_version_time_in = "2018-12-24";
+const char* frag_rssb_version_des_in = "send_voip_full_json_log add survey judgement for K";
 void frag_rssb_history()
 {
 	//2015.11.15  v1.0  create the project	
@@ -227,6 +227,7 @@ void frag_rssb_history()
    //2018.12.10		v4.0//1.recv_msg_fd not unix 2.MsgPort
    //2018.12.11		v4.0//1.file mediatype
    //2018.12.11	   v4.0//resp_checkresult_search_media_cb add K_PROJECT,and delete send_json_log
+   //2018.12.24    v4.0//send_voip_full_json_log add survey judgement for K 
 }
 
 frag_rssb_parameter_t 		g_frag_run;

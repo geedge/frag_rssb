@@ -906,9 +906,13 @@ void send_voip_full_json_log(media_t* mdi)
 {
 	if(NULL == mdi)
 		return;
-
+	if(NULL == mdi->jc_buf)
+		return;
+	resp_checkresult_t* survey_res = (resp_checkresult_t*) (mdi->jc_buf + sizeof(msg_header_t));
+	if(survey_res->service != SURVER_VOIP_COLLECT_TPYE)
+		return;
+	
 	cJSON*	root = NULL;
-
 	string	topic_name = TOPIC_NTC_COLLECT_VOIP_LOG;
 	char pid_buf[64] = {0};
 	char pbuf[32] = {0}; 
@@ -1038,48 +1042,25 @@ void send_voip_full_json_log(media_t* mdi)
 		cJSON_AddStringToObject(root, "user_agent", mdi->sip_opt[SIP_USERAGENT_OPT_INDEX]->opt_value);	
 	}
 	
-	char* survey = NULL;
-	uint32_t survey_len = 0;
-	if(mdi->sip_survey_type&SIP_SURVEY_TYPE_FD)
+	char* survey = mdi->jc_buf;
+	uint32_t survey_len = mdi->jc_buflen;
+	char*	locate_url = NULL;
+	uint32_t locate_urllen = survey_len-sizeof(msg_header_t)-sizeof(resp_checkresult_t);	
+	char locate_urlbuf[1024] = {0};	
+	
+	if(locate_urllen>0)
 	{
-		survey = mdi->fd_buf;
-		survey_len = mdi->fd_buflen;
-	}				
-	if(mdi->sip_survey_type&SIP_SURVEY_TYPE_JC)
-	{
-		survey = mdi->jc_buf;
-		survey_len = mdi->jc_buflen;
-	}
-	if(NULL != survey)
-	{
-		char*	locate_url = NULL;
-		uint32_t locate_urllen = survey_len-sizeof(msg_header_t)-sizeof(resp_checkresult_t);	
-		char locate_ipbuf[64] = {0};
-		char locate_urlbuf[1024] = {0};
-		char*	locate_url_pos = NULL;	
-		
-		if(locate_urllen>0)
+		locate_url = survey + sizeof(msg_header_t) + sizeof(resp_checkresult_t);
+		memcpy(locate_urlbuf, locate_url, locate_urllen);
+		if(mdi->re_offset==2)
 		{
-			locate_url = survey + sizeof(msg_header_t) + sizeof(resp_checkresult_t);
-			locate_url_pos = (char*)memchr(locate_url, ':', locate_urllen);
-			if(NULL != locate_url_pos)
-			{	
-			
-				memcpy(locate_ipbuf, locate_url, locate_url_pos-locate_url);
-				memcpy(locate_urlbuf, locate_url_pos, locate_urllen-(locate_url_pos-locate_url+1));
-				if(mdi->re_offset==2)
-				{
-					cJSON_AddStringToObject(root, "to_from_store_ip", locate_ipbuf);
-					cJSON_AddStringToObject(root, "to_from_store_url", locate_urlbuf);
-				}
-				else
-				{	
-					cJSON_AddStringToObject(root, "from_to_store_ip", locate_ipbuf);
-					cJSON_AddStringToObject(root, "from_to_store_url", locate_urlbuf);
-				}
-			}
-		}		
-	}
+			cJSON_AddStringToObject(root, "to_from_store_url", locate_urlbuf);
+		}
+		else
+		{	
+			cJSON_AddStringToObject(root, "from_to_store_url", locate_urlbuf);
+		}
+	}		
 
 	outbuf = cJSON_Print(root);
 	len = strlen(outbuf);
