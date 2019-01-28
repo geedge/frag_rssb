@@ -226,7 +226,8 @@ void frag_rssb_history()
    //2018.12.07	   v4.0//unixsocket set bufsize timeout in configure
    //2018.12.10		v4.0//1.recv_msg_fd not unix 2.MsgPort
    //2018.12.11		v4.0//1.file mediatype
-   //2018.12.11	   v4.0//resp_checkresult_search_media_cb add K_PROJECT,and delete send_json_log   
+   //2018.12.11	   v4.0//resp_checkresult_search_media_cb add K_PROJECT,and delete send_json_log      
+   //2018.12.24	v4.0//send_voip_full_json_log add survey judgement for K 
    //2019.01.21	   v4.0//support youtube; update req_frag and template
 }
 
