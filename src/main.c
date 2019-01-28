@@ -42,9 +42,9 @@ const char* frag_rssb_version = "2018-08-13T09:00:00";
 const char* frag_rssb_version_time = "2018-08-13T09:00:00";
 const char* frag_rssb_version_des = "MESA@iie rssb_maskey";
 
-int FRAG_RSSB_VERSION_1_0_20181211 = 0;
-const char* frag_rssb_version_time_in = "2018-12-11";
-const char* frag_rssb_version_des_in = "resp_checkresult_search_media_cb add K_PROJECT";
+int FRAG_RSSB_VERSION_1_0_20190121 = 0;
+const char* frag_rssb_version_time_in = "2019-01-21";
+const char* frag_rssb_version_des_in = "support youtube";
 void frag_rssb_history()
 {
 	//2015.11.15  v1.0  create the project	
@@ -218,7 +218,7 @@ void frag_rssb_history()
    //2018.09.13	   v4.0 //1.frag removal 
    //2018.09.20    v4.0//1 voip_fulllog add voice_dir opt
    //2018.09.27	   v4.0 //1. hard balance
-   //2018.10.08 	   v4.0//1.add send_voip_full_json_log for K_PROJECT;2.voip_fulllog and voip_surveylog add voice_dir and cap_ip opt
+   //2018.10.08    v4.0//1.add send_voip_full_json_log for K_PROJECT;2.voip_fulllog and voip_surveylog add voice_dir and cap_ip opt
    //2018.10.22    v4.0//alter g_sip_opt_type and  add enum sip_opt_index
    //2018.11.02	   v4.0//add timer_on
    //2018.11.05	   v4.0//alter voip save_media frg_len>headerlen
@@ -226,7 +226,8 @@ void frag_rssb_history()
    //2018.12.07	   v4.0//unixsocket set bufsize timeout in configure
    //2018.12.10		v4.0//1.recv_msg_fd not unix 2.MsgPort
    //2018.12.11		v4.0//1.file mediatype
-   //2018.12.11	   v4.0//resp_checkresult_search_media_cb add K_PROJECT,and delete send_json_log
+   //2018.12.11	   v4.0//resp_checkresult_search_media_cb add K_PROJECT,and delete send_json_log   
+   //2019.01.21	   v4.0//support youtube; update req_frag and template
 }
 
 frag_rssb_parameter_t 		g_frag_run;

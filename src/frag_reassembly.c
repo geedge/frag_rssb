@@ -481,7 +481,7 @@ void set_media_service_type(media_t* mdi)
 		mdi->media_service_type = MEDIA_SERVICE_TYPE_FRAG;
 		mdi->media_len = 0;
 	}	
-	else if(FILE_FRAG==mdi->media_type)
+	else if(FILE_REQ_FRAG==mdi->media_type)
 	{
 		mdi->media_service_type = MEDIA_SERVICE_TYPE_FRAG;
 	}
@@ -709,7 +709,7 @@ void free_frag_unit(void* data)
 		{
 			case FILE_HLS:
 			case FILE_OSMF: 			
-			case FILE_FRAG: 				
+			case FILE_REQ_FRAG: 				
 			case FILE_MAYBE_FRAG: 				
 				frag_redis_index_twice(frg_unit);
 				break;
@@ -1045,15 +1045,15 @@ long media_preproc_cb(void *data, const uint8_t *key, uint size, void *user_arg)
 	}
 
 	 /*offset==0, log*/
-        if(0==frg->offset)
-        {    
-                if(!FLAG_TEST(mdi->flag, PROG_OFFSET_ZERO))
-                {    
-                        atomic_inc(&g_frag_stat.media_stat[LOG_MEDIA_OFFSET_ZERO]);
-                        FLAG_SET(mdi->flag, PROG_OFFSET_ZERO);
-                }    
-                create_media_write_to_log(mdi, MEDIA_OFFSET_ZERO, NULL);
-        }    
+	 if(0==frg->offset)
+	 {    
+	 	if(!FLAG_TEST(mdi->flag, PROG_OFFSET_ZERO))
+		{    
+			atomic_inc(&g_frag_stat.media_stat[LOG_MEDIA_OFFSET_ZERO]);
+			FLAG_SET(mdi->flag, PROG_OFFSET_ZERO);
+		}    
+		create_media_write_to_log(mdi, MEDIA_OFFSET_ZERO, NULL);
+	}    
         /*record maxoffset*/
         mdi->maxoffset = MAX(frg->offset, mdi->maxoffset);
 
@@ -1335,7 +1335,7 @@ long get_media(void *data, const uint8_t *key, uint size, void *user_arg)
 		}
 		/*便于统计for data*/	
 		/*除了HLS OSMF，其他碎片协议media_type设置为传统节目的mediatype*/
-		if(mdi->media_type==FILE_FRAG)
+		if(mdi->media_type==FILE_REQ_FRAG)
 		{
 			media_info->media_type = FILE_AV;			
 			media_info->prog_len = 0;

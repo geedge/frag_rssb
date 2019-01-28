@@ -36,7 +36,7 @@
 #define	FILE_IOS						0xA3
 #define	FILE_ANDRIOD					0xA4
 #define	FILE_APP						0xA5
-#define	FILE_FRAG						0xA6  /*碎片预告识别的,例如url里面带有偏移量的，例如iqiyi*/
+#define	FILE_REQ_FRAG						0xA6  /*碎片预告识别的,例如url里面带有偏移量的，例如iqiyi*/
 #define	FILE_MAYBE_FRAG 				0xA7  /*前端回传的可能是碎片的音视频*/
 #define	FILE_AV							0x00  /*碎片预告识别的媒体类型转换为0x00*/
 

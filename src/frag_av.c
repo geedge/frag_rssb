@@ -751,7 +751,7 @@ void media_stat(media_t* mdi, frag_unit_t* frg_unit)
 				atomic_inc(&frag_rssb.data_info[RSSB_OSMF_TO_OTHER][TOTAL_PKTS]);
 			}
 			break;
-		case FILE_FRAG:	
+		case FILE_REQ_FRAG:	
 			if(frg_unit->service_id!=0)
 			{
 				atomic_inc(&frag_rssb.data_info[RSSB_RECV_FRAG_MEDIA][TOTAL_PKTS]);	
@@ -794,7 +794,7 @@ void media_byte_stat(media_t* mdi, frag_unit_t* frg_unit, frag_in_t* frg)
 			}
 			break;
 
-		case FILE_FRAG:	
+		case FILE_REQ_FRAG:	
 			if(frg_unit!=NULL && frg_unit->service_id!=0)
 			{
 				atomic_add(&frag_rssb.data_info[RSSB_RECV_FRAG_MEDIA][TOTAL_BYTES],frg->datalen);
@@ -900,10 +900,10 @@ int media_removal(media_t* mdi, frag_unit_t* frg_unit, frag_in_t* frg, frag_ivi_
 		frg->seq = mdi->re_offset;		
 		frg->offset_in = frg->offset;	
 		frag_stat = 1;	
-	}
+	}	
 	else
 	{
-		if(FILE_FRAG==mdi->media_type && NULL!=frg_unit)
+		if(FILE_REQ_FRAG==mdi->media_type && NULL!=frg_unit)
 		{
 			frg->seq = frg_unit->re_offset;
 			frg->offset += frg_unit->ab_offset; 
@@ -1298,7 +1298,7 @@ long converge_mediainfo_search_cb(void *data, const uint8_t *key, uint size, voi
 
 int is_frag(uint8_t media_type)
 {
-	if(media_type==FILE_OSMF || media_type==FILE_HLS || media_type==FILE_FRAG || media_type==FILE_MAYBE_FRAG ||media_type==FILE_IOS|| media_type==FILE_ANDRIOD|| media_type==FILE_APP)
+	if(media_type==FILE_OSMF || media_type==FILE_HLS || media_type==FILE_REQ_FRAG || media_type==FILE_MAYBE_FRAG ||media_type==FILE_IOS|| media_type==FILE_ANDRIOD|| media_type==FILE_APP)
 	{
 		return 1;
 	}

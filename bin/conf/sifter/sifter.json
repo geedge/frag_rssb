@@ -5,12 +5,12 @@
     [
 {
            "compile_id": 1,
-           "service": 2221,
-           "action": 2,
+           "service": 5222,
+           "action": 1,
            "do_blacklist": 1,
-           "do_log": 1,
+           "do_log": 0,
            "effective_rage": 0,
-           "user_region": "FRAG_UNIT_ID",
+           "user_region": "MEDIA_ID",
            "is_valid": "yes",
            "groups": [
                 {
@@ -20,7 +20,7 @@
                             "table_name": "SIFTER_START",
                             "table_type": "string",
                             "table_content": {
-                                "keywords": "http://",
+                                "keywords": "/vmind",
                                 "expr_type": "none",
                                 "match_method": "sub",
                                 "format": "uncase plain"
@@ -32,12 +32,12 @@
         },
 {
            "compile_id": 2,
-           "service": 2221,
-           "action": 4,
+           "service": 5222,
+           "action": 2,
            "do_blacklist": 1,
-           "do_log": 2,
+           "do_log": 1,
            "effective_rage": 0,
-           "user_region": "FRAG_UNIT_REOFFSET",
+           "user_region": "FRAG_UNIT_ID",
            "is_valid": "yes",
            "groups": [
                 {
@@ -47,7 +47,7 @@
                             "table_name": "SIFTER_START",
                             "table_type": "string",
                             "table_content": {
-                                "keywords": "&ts_seg_no=",
+                                "keywords": "/vmind",
                                 "expr_type": "none",
                                 "match_method": "sub",
                                 "format": "uncase plain"
@@ -113,70 +113,16 @@
         },
 {
            "compile_id": 5,
-           "service": 3122,
-           "action": 4,
-           "do_blacklist": 4,
-           "do_log": 1,
-           "effective_rage": 0,
-           "user_region": "FRAG_UNIT_ABOFFSET",
-           "is_valid": "yes",
-           "groups": [
-                {
-                    "group_name": "4_start",
-                    "regions": [
-                        {
-                            "table_name": "SIFTER_START",
-                            "table_type": "string",
-                            "table_content": {
-                                "keywords": "range=",
-                                "expr_type": "none",
-                                "match_method": "sub",
-                                "format": "uncase plain"
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-{
-           "compile_id": 6,
-           "service": 1122,
-           "action": 4,
-           "do_blacklist": 5,
-           "do_log": 1,
-           "effective_rage": 0,
-           "user_region": "FRAG_UNIT_REOFFSET",
-           "is_valid": "yes",
-           "groups": [
-                {
-                    "group_name": "5_start",
-                    "regions": [
-                        {
-                            "table_name": "SIFTER_START",
-                            "table_type": "string",
-                            "table_content": {
-                                "keywords": "Frag",
-                                "expr_type": "none",
-                                "match_method": "sub",
-                                "format": "uncase plain"
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-{
-           "compile_id": 7,
            "service": 2121,
            "action": 2,
-           "do_blacklist": 7,
+           "do_blacklist": 4,
            "do_log": 1,
            "effective_rage": 0,
            "user_region": "FRAG_UNIT_ID",
            "is_valid": "yes",
            "groups": [
                 {
-                    "group_name": "6_start",
+                    "group_name": "4_start",
                     "regions": [
                         {
                             "table_name": "SIFTER_START",
@@ -193,17 +139,17 @@
             ]
         },
 {
-           "compile_id": 8,
+           "compile_id": 6,
            "service": 2121,
            "action": 4,
-           "do_blacklist": 7,
+           "do_blacklist": 4,
            "do_log": 2,
            "effective_rage": 0,
            "user_region": "FRAG_UNIT_REOFFSET",
            "is_valid": "yes",
            "groups": [
                 {
-                    "group_name": "7_start",
+                    "group_name": "5_start",
                     "regions": [
                         {
                             "table_name": "SIFTER_START",
@@ -220,13 +166,67 @@
             ]
         },
 {
-           "compile_id": 9,
-           "service": 5222,
-           "action": 1,
-           "do_blacklist": 8,
-           "do_log": 0,
+           "compile_id": 7,
+           "service": 1122,
+           "action": 4,
+           "do_blacklist": 5,
+           "do_log": 1,
            "effective_rage": 0,
-           "user_region": "MEDIA_ID",
+           "user_region": "FRAG_UNIT_REOFFSET",
+           "is_valid": "yes",
+           "groups": [
+                {
+                    "group_name": "6_start",
+                    "regions": [
+                        {
+                            "table_name": "SIFTER_START",
+                            "table_type": "string",
+                            "table_content": {
+                                "keywords": "Frag",
+                                "expr_type": "none",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+{
+           "compile_id": 8,
+           "service": 2221,
+           "action": 2,
+           "do_blacklist": 7,
+           "do_log": 1,
+           "effective_rage": 0,
+           "user_region": "FRAG_UNIT_ID",
+           "is_valid": "yes",
+           "groups": [
+                {
+                    "group_name": "7_start",
+                    "regions": [
+                        {
+                            "table_name": "SIFTER_START",
+                            "table_type": "string",
+                            "table_content": {
+                                "keywords": "http://",
+                                "expr_type": "none",
+                                "match_method": "sub",
+                                "format": "uncase plain"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+{
+           "compile_id": 9,
+           "service": 2221,
+           "action": 4,
+           "do_blacklist": 7,
+           "do_log": 2,
+           "effective_rage": 0,
+           "user_region": "FRAG_UNIT_REOFFSET",
            "is_valid": "yes",
            "groups": [
                 {
@@ -236,7 +236,7 @@
                             "table_name": "SIFTER_START",
                             "table_type": "string",
                             "table_content": {
-                                "keywords": "/vmind",
+                                "keywords": "&ts_seg_no=",
                                 "expr_type": "none",
                                 "match_method": "sub",
                                 "format": "uncase plain"
@@ -248,12 +248,12 @@
         },
 {
            "compile_id": 10,
-           "service": 5222,
-           "action": 2,
+           "service": 4122,
+           "action": 3,
            "do_blacklist": 8,
            "do_log": 1,
            "effective_rage": 0,
-           "user_region": "FRAG_UNIT_ID",
+           "user_region": "FRAG_UNIT_ABOFFSET",
            "is_valid": "yes",
            "groups": [
                 {
@@ -263,7 +263,7 @@
                             "table_name": "SIFTER_START",
                             "table_type": "string",
                             "table_content": {
-                                "keywords": "/vmind",
+                                "keywords": "range=",
                                 "expr_type": "none",
                                 "match_method": "sub",
                                 "format": "uncase plain"
