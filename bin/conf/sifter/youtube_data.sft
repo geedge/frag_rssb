@@ -8,5 +8,5 @@ sft_id = 4122
 #special character : \r\n = 0x0d0x0a, \x30 = no end , \x0 = null
 #expect_name = {1}{MEDIA_ID}, {2}{FRAG_UNIT_ID}, {3}{FRAG_UNIT_ABOFFSET}, {4}{FRAG_UNIT_REOFFSET}, {5}{MEDIA_SIZE}, {6}{MEDIA_NAME}, {7}{MEDIA_CONTENT}
 #extract_location = {61}{C2S_URL}, {0xD1}{S2C_CONTENT-DISPOSITION},{0xE1}{C2S_CONTENT},{0xF1}{S2C_CONTENT}
-{1}{MEDIA_ID}={61}{C2S_URL}$End$\x0$\x0$range=$
+{1}{MEDIA_ID}={61}{C2S_URL}$Tag$signature=$\x0$&$
 {3}{FRAG_UNIT_ABOFFSET}={61}{C2S_URL}$Tag$range=$\x0$-$

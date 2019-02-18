@@ -62,6 +62,8 @@ $(TARGET):$(OBJECTS) $(OBJECTSCPP)  $(LIB_FILE)
 	#$(CCC) -shared $(CFLAGS) $(OBJECTS) $(LIB) -o $@
 	$(CCC) $(CFLAGS) $(OBJECTS) $(OBJECTSCPP)  $(LIB) $(LDDICTATOR) -o $@
 	cp $(TARGET) ../bin/
+	@echo -e "\033[32mFOR SOQ: make MODE=AV/PIC/VOIP \033[0m"
+	@echo -e "\033[32mFOR NTC: make PROJECT=K MODE=AV/PIC/VOIP \033[0m"
 #	cp $(TARGET) /home/mesasoft/frag_rssb/
 	
 .c.o:
