@@ -22,7 +22,7 @@
 #define	PROTOCOL_MMS				0x09
 #define	PROTOCOL_RTMP				0x0A
 #define	PROTOCOL_SIP				0x0B
-
+ 
 /*媒体类型*/
 #define MEDIA_TYPE_UNKNOWN    			0x00
 /*媒体类型:视频支持的媒体类型*/

@@ -42,9 +42,9 @@ const char* frag_rssb_version = "2018-08-13T09:00:00";
 const char* frag_rssb_version_time = "2018-08-13T09:00:00";
 const char* frag_rssb_version_des = "MESA@iie rssb_maskey";
 
-int FRAG_RSSB_VERSION_1_0_20190121 = 0;
-const char* frag_rssb_version_time_in = "2019-01-21";
-const char* frag_rssb_version_des_in = "support youtube";
+int FRAG_RSSB_VERSION_1_0_20190315 = 0;
+const char* frag_rssb_version_time_in = "2019-03-15";
+const char* frag_rssb_version_des_in = "support udp socket";
 void frag_rssb_history()
 {
 	//2015.11.15  v1.0  create the project	
@@ -229,6 +229,7 @@ void frag_rssb_history()
    //2018.12.11	   v4.0//resp_checkresult_search_media_cb add K_PROJECT,and delete send_json_log      
    //2018.12.24	v4.0//send_voip_full_json_log add survey judgement for K 
    //2019.01.21	   v4.0//support youtube; update req_frag and template
+   //2019.03.15	   v4.0//keepalive; support udp send   
 }
 
 frag_rssb_parameter_t 		g_frag_run;
@@ -767,6 +768,8 @@ int read_conf_and_init(const char* filename)
 	MESA_load_profile_uint_def(filename, "WLB", "wlb_report_interval", (unsigned int*)&g_frag_cfg.wlb_report_interval,10);		
 	MESA_load_profile_uint_def(filename, "WLB", "enable_override", (unsigned int*)&g_frag_cfg.enable_override,0);	
 	MESA_load_profile_uint_def(filename, "WLB", "bfd_recv_port", (unsigned int*)&g_frag_cfg.bfd_recv_port,0);	
+	MESA_load_profile_short_def(filename, "WLB", "down_threshold", (short*)&g_frag_cfg.bfd_threshold,90);		
+	MESA_load_profile_short_def(filename, "WLB", "down_num", (short*)&g_frag_cfg.bfd_down_num,20);		
 
 	/*send bizman :粗拼装往前端发数据，监听响应端口*/	
 	MESA_load_profile_short_def(filename, "NETWORK", "BizmanAckPort", (short*)&g_frag_cfg.bizman_ack_port,22084);		
@@ -906,7 +909,8 @@ int read_conf_and_init(const char* filename)
 		}
 	}	
 
-	/*udp socket : send av data by udp socket*/	
+	/*udp socket : send av data by udp socket*/		
+	MESA_load_profile_short_def(filename, "NETWORK", "UdpSendSwitch", (short*)&g_frag_cfg.send_udp_switch, 0);	
 	uint32_t*	send_udp_ip_serial = NULL;
 	MESA_load_profile_uint_def(filename, "NETWORK", "UdpSendIPNum", (uint32_t*)&g_frag_cfg.send_dest_udp_ip_num,0);		
 	memset(conf_buf,0,sizeof(conf_buf));
@@ -933,7 +937,6 @@ int read_conf_and_init(const char* filename)
 		}
 	}
 	
-#if K_PROJECT
 	if(g_frag_cfg.send_dest_udp_ip_num>0)
 	{
 		for(i=0; i<g_frag_cfg.thread_num; i++)
@@ -948,7 +951,6 @@ int read_conf_and_init(const char* filename)
 			}
 		}
 	}
-#endif
 		
 	/*udp socket : data msg send to windows system*/	
 	uint32_t*   wins_ip_serial = NULL;

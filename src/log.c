@@ -194,23 +194,25 @@ void* thread_stat_output(void *param)
 	
 	char		buf[32] = {0};
 	int 		send_dest_num = 0;
-#if K_PROJECT	
-	send_dest_num = g_frag_cfg.send_dest_udp_ip_num;
-	for(uint32_t m=0;m<g_frag_cfg.send_dest_udp_ip_num;m++)
-	{		
-		inet_ntop(AF_INET, &g_frag_cfg.send_dest_udp_iplist[m], buf, sizeof(buf));
-		g_frag_stat.sendlog_line_id[2*m]=FS_register(g_frag_stat.fs_handle,FS_STYLE_LINE,FS_CALC_CURRENT, "udp_send");
-		g_frag_stat.sendlog_line_id[2*m+1]=FS_register(g_frag_stat.fs_handle,FS_STYLE_LINE,FS_CALC_CURRENT, "lq_count");
-	}	
-#else		
-	send_dest_num = g_frag_cfg.send_dest_addr_num;
-	for(uint32_t m=0;m<g_frag_cfg.send_dest_addr_num;m++)
+	if(g_frag_cfg.send_udp_switch)
 	{
-		g_frag_stat.sendlog_line_id[2*m]=FS_register(g_frag_stat.fs_handle,FS_STYLE_LINE,FS_CALC_CURRENT, (char*)g_frag_cfg.send_dest_addr[m].sun_path);
-        g_frag_stat.sendlog_line_id[2*m+1]=FS_register(g_frag_stat.fs_handle,FS_STYLE_LINE,FS_CALC_CURRENT, "lq_count");
-	}	
-#endif
-
+		send_dest_num = g_frag_cfg.send_dest_udp_ip_num;
+		for(uint32_t m=0;m<g_frag_cfg.send_dest_udp_ip_num;m++)
+		{		
+			inet_ntop(AF_INET, &g_frag_cfg.send_dest_udp_iplist[m], buf, sizeof(buf));
+			g_frag_stat.sendlog_line_id[2*m]=FS_register(g_frag_stat.fs_handle,FS_STYLE_LINE,FS_CALC_CURRENT, "udp_send");
+			g_frag_stat.sendlog_line_id[2*m+1]=FS_register(g_frag_stat.fs_handle,FS_STYLE_LINE,FS_CALC_CURRENT, "lq_count");
+		}
+	}
+	else
+	{	
+		send_dest_num = g_frag_cfg.send_dest_addr_num;
+		for(uint32_t m=0;m<g_frag_cfg.send_dest_addr_num;m++)
+		{
+			g_frag_stat.sendlog_line_id[2*m]=FS_register(g_frag_stat.fs_handle,FS_STYLE_LINE,FS_CALC_CURRENT, (char*)g_frag_cfg.send_dest_addr[m].sun_path);
+	        g_frag_stat.sendlog_line_id[2*m+1]=FS_register(g_frag_stat.fs_handle,FS_STYLE_LINE,FS_CALC_CURRENT, "lq_count");
+		}
+	}
 	memset(buf, 0, sizeof(buf));
 	for(uint32_t m=0;m<g_frag_cfg.special_media_wins_port_num;m++)
 	{
@@ -369,6 +371,17 @@ void get_rssb_queuelog_count()
 	{
 		frag_rssb.sysinfo_stat[RSSB_WAIT_QUEUE][QUEUE_CURRENT] += MESA_lqueue_get_count(frag_rssb.wait_lq[i]);
 	}
+	double queue_usage = (double)frag_rssb.sysinfo_stat[RSSB_WAIT_QUEUE][QUEUE_CURRENT]/(double)(g_frag_cfg.thread_num*frag_rssb.wait_lq_num)*100;
+	if(queue_usage < g_frag_cfg.bfd_threshold)
+	{
+		clrbit(g_frag_cfg.bfd_down_stat,g_frag_cfg.bfd_down_index);
+	}
+	else
+	{
+		setbit(g_frag_cfg.bfd_down_stat,g_frag_cfg.bfd_down_index);
+	}
+	g_frag_cfg.bfd_down_index++;
+	g_frag_cfg.bfd_down_index = g_frag_cfg.bfd_down_index%g_frag_cfg.bfd_down_num;	
 }
 
 void get_rssb_hashlog_count()

@@ -175,7 +175,7 @@ typedef struct frag_rssb_configure_s
 	struct sockaddr_un			send_dest_addr[DEST_MAXNUM];			//unix socket : send frag to dest
 
 	/*send data by udp*/
-	uint16_t					send_dest_udp_port[DEST_MAXNUM];						//udp socket : send frag to dest	
+	uint16_t					send_dest_udp_port[DEST_MAXNUM];		//udp socket : send frag to dest	
 	uint32_t					send_dest_udp_ip_num;
 	in_addr_t					send_dest_udp_iplist[DEST_MAXNUM];		//udp socket : send frag to dest	
 
@@ -240,7 +240,12 @@ typedef struct frag_rssb_configure_s
 	uint32_t                    health_check_port;
 	int16_t						save_media;
 	
-	uint32_t                    bfd_recv_port;
+	uint64_t                    bfd_down_stat;	/*每一个bit是一次监测状态，最多监测最近的64次*/
+	uint32_t                    bfd_recv_port;	
+	int16_t						bfd_down_index;	/*当前第几次*/
+	int16_t						bfd_threshold;
+	int16_t						bfd_down_num;
+	int16_t						send_udp_switch;	
 }frag_rssb_configure_t;
 
 typedef struct frag_rssb_status_s

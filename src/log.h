@@ -21,6 +21,9 @@ typedef long atomic_t;
 #define atomic_set(x,y)	((*(x))=(y))
 #endif 
 
+#define setbit(x,y)  x|=(1<<y)
+#define clrbit(x,y)  x&=~(1<<y)
+
 /*********************************************debug log type***********************************/
 typedef enum
 {

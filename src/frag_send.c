@@ -271,14 +271,16 @@ void send_data_by_unixsocket(const char* data, uint32_t datalen, int thread_id)
 }
 
 void send_data(const char* data, uint32_t datalen, int thread_id)
-{
-	/*采用UDP回传*/
-#if K_PROJECT
-	send_data_by_udp(data, datalen, thread_id);		
-	/*采用unix socket回传*/
-#else	
-	send_data_by_unixsocket(data, datalen, thread_id);
-#endif
+{		
+	if(g_frag_cfg.send_udp_switch)
+	{		
+		send_data_by_udp(data, datalen, thread_id);	
+	}
+	else
+	{
+		/*采用unix socket回传*/
+		send_data_by_unixsocket(data, datalen, thread_id);
+	}
 }
 
 void send_data_bizman(const char* data, uint32_t datalen, uint64_t mid,uint32_t ip, int thread_id)
@@ -660,7 +662,7 @@ void pack_and_send_media_info(media_info_t* media_info, frag_in_t* frg, int thre
 		if(g_frag_run.usm_on_flag)
 		{
 			send_data_usm(sendbuf,sendbuflen,thread_id);	
-		}
+		}		
 		else
 		{
 			send_data(sendbuf, sendbuflen, thread_id);

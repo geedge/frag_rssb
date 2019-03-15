@@ -10,10 +10,15 @@ typedef struct bfd_port_s
 #define	MY_ID_OFFSET	4
 #define	YOUR_ID_OFFSET	8
 #define	ID_SIZE			4
+
+#define setbit(x,y)  x|=(1<<y)
+#define clrbit(x,y)  x&=~(1<<y)
+#define getbit(x,y)  ((x) >> (y)&1)
+
 typedef struct bfd_header_s
 {
     unsigned char version_diag;
-    unsigned char flags;
+    unsigned char flags;				/*flagǰ2bit��state*/
     unsigned char detect_time_multiplier;
     unsigned char length;
     unsigned char my_discriminator[4]; /* ҵ?º? ²²â*/
