@@ -19,6 +19,7 @@
 
 #include "hard_keepalive.h"
 #include "main.h"
+#include "MESA_handle_logger.h"
 
 extern frag_rssb_parameter_t 		g_frag_run;
 extern frag_rssb_configure_t 		g_frag_cfg;
@@ -134,17 +135,18 @@ void* thread_hard_keepalive(void *param)
 				memcpy(discriminator_temp, buf+MY_ID_OFFSET, ID_SIZE);
 				memcpy(buf+MY_ID_OFFSET, buf+YOUR_ID_OFFSET, ID_SIZE);
 				memcpy(buf+YOUR_ID_OFFSET, discriminator_temp, ID_SIZE);
-				/*发送队列state状态*/
-				int state = 0;
-				for(int i=0;i<g_frag_cfg.bfd_down_num;i++)
+				/*发送队列state状态*/			
+				uint64_t state = getbit(g_frag_cfg.bfd_down_stat,0);
+				for(uint64_t i=1;i<g_frag_cfg.bfd_down_num;i++)
 				{
-					state &= getbit(g_frag_cfg.bfd_down_stat,i);
-				}
+					state &= getbit(g_frag_cfg.bfd_down_stat,i);		
+				}				
+				
 				if(state)
 				{
-					/*STATE_DOWN 2bit:  0 1*/
-					clrbit(((bfd_header_t*)buf)->flags,8);
-					setbit(((bfd_header_t*)buf)->flags,7);
+					/*STATE_DOWN 2bit:  0 1*/					
+					clrbit(((bfd_header_t*)buf)->flags,7);
+					setbit(((bfd_header_t*)buf)->flags,6);
 					printf("wait_queue is overflow, app is down.\n");
 					MESA_handle_runtime_log(g_frag_run.logger, RLOG_LV_FATAL, FRAG_REASSEMBLY_MODULE_NAME, 
 											"{%s:%d} wait_queue is overflow, app is down.", 
@@ -152,9 +154,9 @@ void* thread_hard_keepalive(void *param)
 				}
 				else
 				{
-					/*STATE_UP 2bit:  1 1*/
-					setbit(((bfd_header_t*)buf)->flags,8);
-					setbit(((bfd_header_t*)buf)->flags,7);
+					/*STATE_UP 2bit:  1 1*/					
+					setbit(((bfd_header_t*)buf)->flags,7);
+					setbit(((bfd_header_t*)buf)->flags,6);
 				}
 				send_rec = udp_socket_send(recv_pkt_sd,
 												src_ip,

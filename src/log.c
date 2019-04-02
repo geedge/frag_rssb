@@ -25,6 +25,9 @@
 #include "frag_reassembly_in.h"
 #include "log.h"
 #include "main.h"
+#include "MESA_handle_logger.h"
+#include "hard_keepalive.h"
+
 
 extern frag_rssb_parameter_t 		g_frag_run;
 extern frag_rssb_configure_t 		g_frag_cfg;
@@ -381,7 +384,43 @@ void get_rssb_queuelog_count()
 		setbit(g_frag_cfg.bfd_down_stat,g_frag_cfg.bfd_down_index);
 	}
 	g_frag_cfg.bfd_down_index++;
-	g_frag_cfg.bfd_down_index = g_frag_cfg.bfd_down_index%g_frag_cfg.bfd_down_num;	
+	g_frag_cfg.bfd_down_index = g_frag_cfg.bfd_down_index%g_frag_cfg.bfd_down_num;
+
+	/*
+	uint64_t state = getbit(g_frag_cfg.bfd_down_stat,0);
+	for(uint64_t i=1;i<g_frag_cfg.bfd_down_num;i++)
+	{
+		state &= getbit(g_frag_cfg.bfd_down_stat,i);		
+	}
+	printf("%lld\n", g_frag_cfg.bfd_down_stat);
+	printf("%d\n\n", state);
+	if(state)
+	{
+		printf("wait_queue is overflow, app is down.\n");
+					MESA_handle_runtime_log(g_frag_run.logger, RLOG_LV_FATAL, FRAG_REASSEMBLY_MODULE_NAME, 
+											"{%s:%d} wait_queue is overflow, app is down.", 
+											__FILE__,__LINE__);
+	}
+	
+	char		buf[1500] = {0};
+	setbit(((bfd_header_t*)buf)->flags,7);
+	setbit(((bfd_header_t*)buf)->flags,6);
+	if(state)
+	{		
+		clrbit(((bfd_header_t*)buf)->flags,7);
+		setbit(((bfd_header_t*)buf)->flags,6);
+		printf("wait_queue is overflow, app is down.\n");
+		MESA_handle_runtime_log(g_frag_run.logger, RLOG_LV_FATAL, FRAG_REASSEMBLY_MODULE_NAME, 
+								"{%s:%d} wait_queue is overflow, app is down.", 
+								__FILE__,__LINE__);
+	}
+	else
+	{
+		
+		setbit(((bfd_header_t*)buf)->flags,7);
+		setbit(((bfd_header_t*)buf)->flags,6);
+	}
+	*/
 }
 
 void get_rssb_hashlog_count()

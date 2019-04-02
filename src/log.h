@@ -23,6 +23,7 @@ typedef long atomic_t;
 
 #define setbit(x,y)  x|=(1<<y)
 #define clrbit(x,y)  x&=~(1<<y)
+#define getbit(x,y)  ((x) >> (y)&1)
 
 /*********************************************debug log type***********************************/
 typedef enum
