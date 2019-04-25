@@ -1414,9 +1414,9 @@ long get_media(void *data, const uint8_t *key, uint size, void *user_arg)
 			{				
 				/*发给内容分析程序，选项*/
 				media_info->opt_unit = (struct opt_unit_t*)calloc(1, sizeof(struct opt_unit_t));
-				media_info->opt_unit->opt_len = sizeof(uint32_t)+sizeof(uint8_t)+sizeof(char*);
+				media_info->opt_unit->opt_len = sizeof(uint32_t)+sizeof(uint8_t)+sizeof(unsigned int);
 				media_info->opt_unit->opt_type = OPT_SOURCE_IP;
-				media_info->opt_unit->opt_value = (char*)calloc(1, sizeof(char*));
+				media_info->opt_unit->opt_value = (char*)calloc(1, sizeof(unsigned int));
 				*(unsigned int*)(media_info->opt_unit->opt_value) = g_frag_cfg.local_ip_nr;	
 				opt_num++;	
 			}

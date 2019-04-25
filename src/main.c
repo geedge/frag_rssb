@@ -42,9 +42,9 @@ const char* frag_rssb_version = "2018-08-13T09:00:00";
 const char* frag_rssb_version_time = "2018-08-13T09:00:00";
 const char* frag_rssb_version_des = "MESA@iie rssb_maskey";
 
-int FRAG_RSSB_VERSION_1_0_20190315 = 0;
-const char* frag_rssb_version_time_in = "2019-03-15";
-const char* frag_rssb_version_des_in = "support udp socket";
+int FRAG_RSSB_VERSION_1_0_20190425 = 0;
+const char* frag_rssb_version_time_in = "2019-04-25";
+const char* frag_rssb_version_des_in = "adjust local_eth opt";
 void frag_rssb_history()
 {
 	//2015.11.15  v1.0  create the project	
@@ -229,7 +229,8 @@ void frag_rssb_history()
    //2018.12.11	   v4.0//resp_checkresult_search_media_cb add K_PROJECT,and delete send_json_log      
    //2018.12.24	v4.0//send_voip_full_json_log add survey judgement for K 
    //2019.01.21	   v4.0//support youtube; update req_frag and template
-   //2019.03.15	   v4.0//keepalive; support udp send   
+   //2019.03.15	   v4.0//keepalive; support udp send 
+   //2019.04.25	   v4.0//media_info:local_nr opt 
 }
 
 frag_rssb_parameter_t 		g_frag_run;
