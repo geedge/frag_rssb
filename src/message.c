@@ -805,7 +805,14 @@ long resp_checkresult_search_media_cb(void *data, const uint8_t *key, uint size,
 	{
 		g_frag_stat.stat_info[RESP_CHECKRESULT_FRAG_SURVEY][TOTAL_PKTS]++; 
 		g_frag_stat.stat_info[RESP_CHECKRESULT_FRAG_SURVEY][TOTAL_BYTES] += buflen;
-	}	
+	}
+	/*debug: create index_url*/
+#if 0
+	const char* index_url = "edge.hls.ll.hitbox.tv/hls/spacemonkeylive_480p/index.m3u8?st=H9iOon5FeXHqrKzb0tDJjA;ci=OnmyO4BON-CkyznTBeG4pw";
+	mdi->opt[MEDIA_OPT_INDEX_URL][mdi->url_opt_index] = (opt_in_t*)malloc(sizeof(opt_in_t));
+	mdi->opt[MEDIA_OPT_INDEX_URL][mdi->url_opt_index]->opt_value = (char*)index_url;
+	mdi->opt[MEDIA_OPT_INDEX_URL][mdi->url_opt_index]->opt_len = strlen(index_url);
+#endif	
 	if(mdi->media_service_type==MEDIA_SERVICE_TYPE_FRAG && mdi->opt[MEDIA_OPT_INDEX_URL][mdi->url_opt_index]!=NULL)
 	{
 		/*碎片化管控V1版本: 子串管控*/   
@@ -892,6 +899,11 @@ long resp_checkresult_search_media_cb(void *data, const uint8_t *key, uint size,
 		g_frag_stat.stat_info[RESP_CHECKRESULT_INDEX_SURVEY][TOTAL_PKTS]++; 
 		g_frag_stat.stat_info[RESP_CHECKRESULT_INDEX_SURVEY][TOTAL_BYTES] += buflen;			
 	}	
+	
+#if 0
+	free(mdi->opt[MEDIA_OPT_INDEX_URL][mdi->url_opt_index]);
+	mdi->opt[MEDIA_OPT_INDEX_URL][mdi->url_opt_index]=NULL;
+#endif	
 
 	/*给前端发建议*/
 #if K_PROJECT
