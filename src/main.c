@@ -42,7 +42,7 @@ const char* frag_rssb_version = "2018-08-13T09:00:00";
 const char* frag_rssb_version_time = "2018-08-13T09:00:00";
 const char* frag_rssb_version_des = "MESA@iie rssb_maskey";
 
-int FRAG_RSSB_VERSION_1_0_20190425 = 0;
+int FRAG_RSSB_VERSION_1_0_20191211 = 0;
 const char* frag_rssb_version_time_in = "2019-08-20";
 const char* frag_rssb_version_des_in = "construct frag survey";
 void frag_rssb_history()
@@ -232,6 +232,7 @@ void frag_rssb_history()
    //2019.03.15	   v4.0//keepalive; support udp send 
    //2019.04.25	   v4.0//media_info:local_nr opt    
    //2019.08.20		v4.0//construct frag survey 
+   //2019.12.11       v4.0 // alter sip_send_survey_log SIP to RTP 
 }
 
 frag_rssb_parameter_t 		g_frag_run;

@@ -395,8 +395,8 @@ int sip_send_survey_log(media_t* mdi, char* survey, uint32_t survey_len)
 		
 	
 	/*VOIP协议类型 SIP OPT_VOIP_PROTOCOL*/
-	used_len += get_log_opt_unit((char*)SIP_PROTO_OPT, 
-								 strlen(SIP_PROTO_OPT), 
+	used_len += get_log_opt_unit((char*)SIP_PROTO_RTP, 
+								 strlen(SIP_PROTO_RTP), 
 								 data+used_len, 
 								 data_len-used_len, 
 								 OPT_VOIP_PROTOCOL,
